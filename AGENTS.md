@@ -2,11 +2,11 @@
 
 Repository-wide instructions for AI coding agents and automated engineering assistants.
 
-This file is intentionally small. It defines **how to work in this repository**, not every engineering rule. Detailed backend, frontend, security, testing, data, and operational guidance belongs in `docs/standards/` and should be loaded only when relevant.
+This file is intentionally small. It defines **how to work in this repository**, not every engineering rule. Detailed guidance belongs in `docs/standards/` and should be loaded only when relevant.
 
 ## 1. Core Rule
 
-Do not treat chat history, assumptions, generated code, or the current implementation as a substitute for authoritative project documentation.
+Do not treat chat history, assumptions, generated code, or current implementation as a substitute for authoritative project documentation.
 
 Before a non-trivial change, determine:
 1. what behavior is requested;
@@ -18,6 +18,12 @@ Before a non-trivial change, determine:
 
 Do not silently invent product or architecture decisions.
 
+### Initialization Trigger
+
+If this repository still contains project-template placeholders such as `<PROJECT_NAME>` and the task is to start/adapt a new project, read `docs/PROJECT_INITIALIZATION.md` before normal feature implementation.
+
+Do not treat template placeholder content as confirmed project facts.
+
 ## 2. Source of Truth
 
 | Concern | Authoritative Source |
@@ -27,15 +33,15 @@ Do not silently invent product or architecture decisions.
 | Detailed feature behavior | `docs/01_features/<feature>.md` |
 | System structure and boundaries | `docs/02_architecture/SYSTEM_ARCHITECTURE.md` |
 | Architecture rationale | `docs/02_architecture/adr/` |
-| Persistent domain model | migrations/schema + `DATA_MODEL.md` |
-| REST interface | `contracts/openapi/` |
-| Async/event interface | `contracts/asyncapi/` or schemas |
-| UI system | `DESIGN_SYSTEM.md` + relevant feature spec |
+| Persistent domain model | migrations/schema + `docs/02_architecture/DATA_MODEL.md` |
+| REST interface | `contracts/openapi/` when used |
+| Async/event interface | `contracts/asyncapi/` or schemas when used |
+| UI system | `docs/03_design/DESIGN_SYSTEM.md` + relevant feature spec |
 | Engineering rules | `docs/standards/` |
-| Test approach | `TEST_STRATEGY.md` + relevant feature spec |
+| Test approach | `docs/04_engineering/TEST_STRATEGY.md` + relevant feature spec |
 | Runtime and deployment | `docs/05_operations/` |
 
-When sources conflict, do not choose whichever is easiest to implement. Follow the source that owns the concern, or update that source when the requested change intentionally changes the decision.
+When sources conflict, follow the source that owns the concern, or update that source when the requested change intentionally changes the decision.
 
 ## 3. Read Selectively
 
@@ -59,22 +65,20 @@ Load only standards relevant to the task.
 
 | Area | Standard |
 |---|---|
-| Workflow / review | `01_ENGINEERING_WORKFLOW.md` |
-| Code quality | `02_CODE_QUALITY.md` |
-| Architecture | `03_ARCHITECTURE.md` |
-| Backend | `04_BACKEND_STANDARD.md` |
-| Frontend | `05_FRONTEND_STANDARD.md` |
-| API / integrations / events | `06_API_INTEGRATION_STANDARD.md` |
-| Database / persistence | `07_DATA_PERSISTENCE_STANDARD.md` |
-| Security | `08_SECURITY_STANDARD.md` |
-| Testing | `09_TESTING_STANDARD.md` |
-| Reliability / observability | `10_OBSERVABILITY_RELIABILITY.md` |
-| Performance | `11_PERFORMANCE_STANDARD.md` |
-| Dependencies / supply chain | `12_DEPENDENCY_SUPPLY_CHAIN.md` |
-| CI/CD / release | `13_CI_CD_RELEASE.md` |
-| AI-assisted development | `14_AI_ASSISTED_DEVELOPMENT.md` |
-
-If a referenced standard does not exist yet, follow established project patterns and avoid inventing a new project-wide convention.
+| Workflow / review | `docs/standards/01_ENGINEERING_WORKFLOW.md` |
+| Code quality | `docs/standards/02_CODE_QUALITY.md` |
+| Architecture | `docs/standards/03_ARCHITECTURE.md` |
+| Backend | `docs/standards/04_BACKEND_STANDARD.md` |
+| Frontend | `docs/standards/05_FRONTEND_STANDARD.md` |
+| API / integrations / events | `docs/standards/06_API_INTEGRATION_STANDARD.md` |
+| Database / persistence | `docs/standards/07_DATA_PERSISTENCE_STANDARD.md` |
+| Security | `docs/standards/08_SECURITY_STANDARD.md` |
+| Testing | `docs/standards/09_TESTING_STANDARD.md` |
+| Reliability / observability | `docs/standards/10_OBSERVABILITY_RELIABILITY.md` |
+| Performance | `docs/standards/11_PERFORMANCE_STANDARD.md` |
+| Dependencies / supply chain | `docs/standards/12_DEPENDENCY_SUPPLY_CHAIN.md` |
+| CI/CD / release | `docs/standards/13_CI_CD_RELEASE.md` |
+| AI-assisted development | `docs/standards/14_AI_ASSISTED_DEVELOPMENT.md` |
 
 ## 5. Before Coding
 
@@ -93,6 +97,7 @@ Prefer the smallest coherent change that satisfies the requirement. Do not perfo
 ## 6. Change Discipline
 
 ### Product and Feature Behavior
+
 When observable behavior changes:
 - update the relevant PRD or feature spec;
 - preserve stable requirement IDs when the requirement remains the same;
@@ -101,6 +106,7 @@ When observable behavior changes:
 - keep tests aligned with the specification.
 
 ### Architecture
+
 Do not change major architecture implicitly. Create or update an ADR when a decision materially changes:
 - system or module boundaries;
 - strategic frameworks, datastores, brokers, or providers;
@@ -114,6 +120,7 @@ Do not change major architecture implicitly. Create or update an ADR when a deci
 Routine implementation choices do not require ADRs.
 
 ### Contracts
+
 Public and cross-component interfaces are contract-first:
 - REST changes → update OpenAPI;
 - event changes → update AsyncAPI/schema;
@@ -143,8 +150,8 @@ Update documentation only when the change makes its authoritative source inaccur
 
 | Change | Update |
 |---|---|
-| Product capability/scope | PRD |
-| Detailed feature behavior | Feature spec |
+| Product capability/scope | `docs/00_product/PRD.md` |
+| Detailed feature behavior | relevant feature spec |
 | Architecture decision | ADR |
 | System/module boundary | System Architecture |
 | REST contract | OpenAPI |
@@ -167,7 +174,7 @@ Surface the unresolved decision explicitly. Temporary assumptions must be labele
 
 ## 10. Testing and Evidence
 
-Use the smallest meaningful test set while iterating, then run the broader checks required by affected standards before completion.
+Use the smallest meaningful test set while iterating, then run broader checks required by affected standards before completion.
 
 Tests should prove behavior, contracts, and important failure paths. For defect fixes, add regression coverage when practical.
 

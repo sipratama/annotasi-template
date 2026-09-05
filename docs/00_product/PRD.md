@@ -1,8 +1,8 @@
 # Product Requirements Document (PRD) — <PROJECT_NAME>
 
-> **Peran dokumen:** Source of truth untuk **apa yang harus disediakan oleh produk pada level product capability, scope, user journey, dan outcome**.
+> **Peran dokumen:** Source of truth untuk **apa yang harus disediakan product pada level capability, cross-feature behavior, user journey, dan release scope**.
 >
-> Masalah, target user, value proposition, dan product principles berasal dari `PRODUCT_BRIEF.md`. Detail perilaku satu feature berada di `docs/01_features/<feature>.md`. Detail teknis berada di dokumen architecture, ADR, dan machine-readable contracts.
+> Product purpose, target user, success metrics, dan product-level assumptions berada di `PRODUCT_BRIEF.md`. Detailed behavior satu feature berada di `docs/01_features/<feature>.md`. Technical design berada di architecture/ADR/contracts.
 
 ---
 
@@ -19,38 +19,29 @@
 
 ---
 
-## 1. Ringkasan Produk
+## 1. Product Summary
 
-### Product Summary
+<Jelaskan product dalam 2–4 kalimat dari sisi capability dan user outcome. Jangan mengulang seluruh Product Brief.>
 
-<Jelaskan produk dalam 2–4 kalimat. Fokus pada apa yang pengguna dapat lakukan dan outcome yang ingin dicapai.>
+### Product Brief Reference
 
-### Product Goal
-
-Produk ini bertujuan untuk:
-
-1. `<GOAL>`
-2. `<GOAL>`
-3. `<GOAL>`
-
-### Referensi Product Brief
-
-Dokumen ini harus konsisten dengan:
+Canonical product intent:
 
 `./PRODUCT_BRIEF.md`
 
-Jika product intent berubah secara material, update `PRODUCT_BRIEF.md` terlebih dahulu atau bersamaan dengan PRD.
+Jika product purpose, target users, strategic outcome, success metric, atau product-level assumption berubah, update Product Brief.
 
 ---
 
-## 2. Target User dan Actors
+## 2. Actors
 
-Jangan mengulang persona panjang dari Product Brief. Hanya catat actor yang relevan dengan product behavior.
+Hanya actor yang diperlukan untuk memahami product behavior.
 
-| Actor | Tujuan Utama | Akses / Responsibility |
+| Actor | Primary Goal | Access / Responsibility |
 |---|---|---|
 | `<ACTOR>` | `<GOAL>` | `<SCOPE>` |
-| `<ACTOR>` | `<GOAL>` | `<SCOPE>` |
+
+Detailed persona/context tetap berada di Product Brief.
 
 ---
 
@@ -58,49 +49,33 @@ Jangan mengulang persona panjang dari Product Brief. Hanya catat actor yang rele
 
 ### In Scope
 
-Product capability yang termasuk dalam fase ini:
-
-- `<CAPABILITY>`
 - `<CAPABILITY>`
 - `<CAPABILITY>`
 
 ### Out of Scope
 
-Hal-hal berikut tidak termasuk dalam fase ini:
-
-- `<OUT_OF_SCOPE>`
 - `<OUT_OF_SCOPE>`
 - `<OUT_OF_SCOPE>`
 
-Out-of-scope item tidak boleh diimplementasikan secara opportunistic tanpa perubahan product scope.
+Product Brief menjelaskan MVP hypothesis/boundary. PRD menerjemahkannya menjadi capability scope yang lebih konkret.
 
 ---
 
 ## 4. Product Capabilities
 
-Gunakan stable capability ID.
-
-Format yang disarankan:
+Gunakan stable capability ID:
 
 ```text
 CAP-<DOMAIN>-<NUMBER>
 ```
 
-Contoh:
-
-```text
-CAP-AUTH-001
-CAP-LEARNING-002
-CAP-COMMERCE-003
-```
-
 ### CAP-<DOMAIN>-001 — <CAPABILITY_NAME>
 
-**Deskripsi**  
-<Jelaskan capability dari sudut pandang produk.>
+**Description**  
+<Jelaskan capability dari sudut pandang product.>
 
 **User Outcome**  
-<Outcome yang diterima pengguna.>
+<Outcome yang diterima user.>
 
 **Primary Actors**
 - `<ACTOR>`
@@ -111,12 +86,10 @@ P0 / P1 / P2
 **Related Feature Specs**
 - `../01_features/<feature>.md`
 
----
-
 ### CAP-<DOMAIN>-002 — <CAPABILITY_NAME>
 
-**Deskripsi**  
-<Deskripsi>
+**Description**  
+<Description>
 
 **User Outcome**  
 <Outcome>
@@ -131,12 +104,13 @@ P0 / P1 / P2
 
 ## 5. Primary User Journeys
 
-PRD menjelaskan journey lintas-feature. Detail behavior per feature tetap berada di feature specification.
+PRD hanya menyimpan cross-feature journey.
 
-### Journey J-01 — <JOURNEY_NAME>
+Detailed within-feature flow berada di Feature Spec. UX interaction detail dapat berada di `../03_design/UX_FLOWS.md`.
 
-**Actor:** `<ACTOR>`
+### J-01 — <JOURNEY_NAME>
 
+**Actor:** `<ACTOR>`  
 **Goal:** `<GOAL>`
 
 ```text
@@ -158,51 +132,39 @@ PRD menjelaskan journey lintas-feature. Detail behavior per feature tetap berada
 
 ---
 
-### Journey J-02 — <JOURNEY_NAME>
+## 6. Product-Wide Rules
 
-**Actor:** `<ACTOR>`
-
-**Goal:** `<GOAL>`
-
-**Success Condition**
-- `<CONDITION>`
-
----
-
-## 6. Product Rules
-
-Gunakan bagian ini hanya untuk aturan lintas-feature atau product-wide.
+Hanya aturan lintas-feature atau product-wide.
 
 | ID | Rule |
 |---|---|
 | PR-001 | `<PRODUCT-WIDE RULE>` |
 | PR-002 | `<PRODUCT-WIDE RULE>` |
 
-Aturan yang hanya berlaku pada satu feature harus berada di feature spec.
+Rule yang hanya berlaku pada satu feature harus berada di Feature Spec.
 
 ---
 
 ## 7. Roles and Permissions Overview
 
-Ini adalah overview product-level, bukan security implementation.
+Ini adalah product-level overview, bukan authoritative security implementation.
 
 | Capability / Action | `<ROLE_A>` | `<ROLE_B>` | `<ROLE_C>` |
 |---|---:|---:|---:|
-| `<ACTION>` | Yes | No | Yes |
-| `<ACTION>` | Own only | All | No |
+| `<ACTION>` | Yes | No | Own only |
 
-Detailed authorization rules tetap berada di feature spec dan security/architecture documentation.
+Detailed authorization rule tetap berada di Feature Spec dan trusted backend/security boundary.
 
 ---
 
 ## 8. UX Requirements
 
-### Experience Principles
+### Cross-Product Experience Expectations
 
-- `<PRINCIPLE>`
-- `<PRINCIPLE>`
+- `<EXPECTATION>`
+- `<EXPECTATION>`
 
-### Required Cross-Product States
+### Required States
 
 Aplikasi harus menangani state yang relevan secara konsisten:
 
@@ -212,60 +174,62 @@ Aplikasi harus menangani state yang relevan secara konsisten:
 - validation error;
 - server/dependency error;
 - unauthorized/forbidden;
-- offline/degraded state jika applicable.
+- offline/degraded jika applicable.
 
-### Responsive and Accessibility Expectations
+### Responsive / Accessibility
 
 - `<REQUIREMENT>`
 - `<REQUIREMENT>`
 
-Detailed UI patterns dan design tokens berada di `DESIGN_SYSTEM.md`.
+Detailed UI pattern/tokens berada di Design System.
 
 ---
 
 ## 9. Notifications and User Communication
 
-Gunakan jika produk memiliki notification, email, push, in-app alert, atau transactional communication.
+Isi bila product mempunyai email, push, in-app notification, atau transactional communication.
 
 | Trigger | Audience | Channel | Purpose |
 |---|---|---|---|
 | `<TRIGGER>` | `<ACTOR>` | Email / Push / In-app | `<PURPOSE>` |
 
-Copy final tidak harus disimpan di PRD bila sudah memiliki dedicated content source.
+Final copy boleh hidup di dedicated content source.
 
 ---
 
 ## 10. Search, Filter, Sort, and Discovery
 
-Gunakan bila relevan.
+Isi hanya bila relevan.
 
 ### Search
-
 - `<EXPECTED PRODUCT BEHAVIOR>`
 
 ### Filter
-
 - `<EXPECTED PRODUCT BEHAVIOR>`
 
 ### Sort
-
 - `<EXPECTED PRODUCT BEHAVIOR>`
 
 ### Discovery / Recommendation
-
 - `<EXPECTED PRODUCT BEHAVIOR OR N/A>`
 
-Detail query/index/search architecture tidak berada di PRD.
+Query/index/search architecture tidak berada di PRD.
 
 ---
 
-## 11. Analytics and Product Events
+## 11. Analytics and Product Instrumentation
 
-Catat event yang dibutuhkan untuk memahami product outcome, bukan seluruh telemetry engineering.
+**Success metric targets tidak didefinisikan ulang di sini.**
 
-| Event | Trigger | Key Properties | Purpose |
+Canonical metrics berada di:
+
+`./PRODUCT_BRIEF.md#11-success-metrics`
+
+PRD hanya memetakan event/instrumentation yang diperlukan untuk mengukur product behavior/outcome.
+
+| Event | Trigger | Key Properties | Supports Metric / Question |
 |---|---|---|---|
-| `<EVENT_NAME>` | `<WHEN>` | `<PROPERTIES>` | `<WHY>` |
+| `<EVENT_NAME>` | `<WHEN>` | `<PROPERTIES>` | `<METRIC / QUESTION>` |
 
 Jangan memasukkan sensitive data ke analytics tanpa kebutuhan dan review yang jelas.
 
@@ -280,7 +244,7 @@ Product-level expectation:
 - `<RETENTION OR CONSENT EXPECTATION>`
 - `<DATA EXPORT / ACCOUNT DELETION EXPECTATION>`
 
-Physical data model berada di `DATA_MODEL.md` dan migrations/schema.
+Physical data model berada di Data Model dan migrations/schema.
 
 ---
 
@@ -292,35 +256,11 @@ Product-level dependency pada external systems.
 |---|---|---:|---|
 | `<SERVICE>` | `<PURPOSE>` | Yes / No | `<FEATURE>` |
 
-Protocol, retry, timeout, dan technical integration behavior berada di architecture/contract/standards.
+Technical protocol, retry, timeout, auth, dan compatibility berada di contracts/architecture/standards.
 
 ---
 
-## 14. Success Metrics
-
-Metric authoritative sebaiknya konsisten dengan Product Brief.
-
-### Primary Metric
-
-| Metric | Definition | Target / Direction |
-|---|---|---|
-| `<METRIC>` | `<CALCULATION>` | `<TARGET>` |
-
-### Supporting Metrics
-
-| Metric | Purpose |
-|---|---|
-| `<METRIC>` | `<WHY>` |
-
-### Guardrails
-
-| Metric | Guardrail |
-|---|---|
-| `<METRIC>` | `<LIMIT>` |
-
----
-
-## 15. Release Scope
+## 14. Release Scope
 
 ### Required for Release
 
@@ -331,80 +271,80 @@ Metric authoritative sebaiknya konsisten dengan Product Brief.
 
 - `CAP-...`
 
-### Release Blockers
+### Product Release Blockers
 
-Release tidak boleh dianggap product-complete jika:
+Release belum product-complete jika:
 
 - `<BLOCKER CONDITION>`
 - `<BLOCKER CONDITION>`
 
-Technical release gates berada di `RELEASE_CHECKLIST.md` dan CI/CD standard.
+Technical release gate berada di Release Checklist dan CI/CD standard.
 
 ---
 
-## 16. Dependencies and Assumptions
+## 15. Delivery Dependencies
 
-### Dependencies
+Bagian ini hanya untuk dependency yang menghambat delivery capability saat ini.
 
-| Dependency | Needed For | Risk |
-|---|---|---|
-| `<DEPENDENCY>` | `<CAPABILITY>` | Low / Medium / High |
+Product/business assumptions tetap authoritative di Product Brief.
 
-### Assumptions
-
-| ID | Assumption | Status |
-|---|---|---|
-| A-01 | `<ASSUMPTION>` | Open / Validated / Rejected |
+| Dependency | Needed For | Risk | Status |
+|---|---|---|---|
+| `<DEPENDENCY>` | `<CAPABILITY>` | Low / Medium / High | Open / Ready |
 
 ---
 
-## 17. Open Product Decisions
+## 16. Open Product Decisions
 
 | ID | Decision / Question | Owner | Blocking? | Target |
 |---|---|---|---:|---|
 | PD-01 | `<QUESTION>` | `<OWNER>` | Yes / No | `<MILESTONE>` |
 
-Jika keputusan menghasilkan architecture change, buat ADR. Jika menghasilkan behavior change, update feature spec.
+Jika decision:
+- mengubah architecture → buat/update ADR;
+- mengubah detailed feature behavior → update Feature Spec;
+- mengubah product purpose/metric/assumption → update Product Brief.
 
 ---
 
-## 18. Feature Specification Index
+## 17. Feature Specification Index
 
 | Feature | Spec | Status | Related Capability |
 |---|---|---|---|
 | `<FEATURE>` | `../01_features/<feature>.md` | Draft / Locked | `CAP-...` |
 
-PRD tidak boleh menduplikasi seluruh functional requirements dari feature specs.
+PRD tidak boleh menduplikasi seluruh Functional Requirements dari Feature Specs.
 
 ---
 
-## 19. Product Acceptance
+## 18. Product Acceptance
 
-Product scope untuk fase ini dianggap terpenuhi ketika:
+Scope fase ini dianggap terpenuhi ketika:
 
 - [ ] seluruh P0 capabilities tersedia;
 - [ ] primary user journeys dapat diselesaikan;
-- [ ] relevant feature acceptance criteria terpenuhi;
-- [ ] product metrics/event instrumentation yang diwajibkan tersedia;
-- [ ] tidak ada product blocker yang unresolved;
+- [ ] relevant feature Acceptance Criteria terpenuhi;
+- [ ] instrumentation yang diperlukan untuk canonical product metrics tersedia;
+- [ ] tidak ada unresolved product blocker;
 - [ ] out-of-scope behavior tidak masuk tanpa keputusan eksplisit.
 
 Engineering Definition of Done berada di `AGENTS.md` dan engineering standards.
 
 ---
 
-## 20. Related Documents
+## 19. Related Documents
 
 - Product Brief: `./PRODUCT_BRIEF.md`
 - Roadmap: `./ROADMAP.md`
 - Feature Specs: `../01_features/`
+- UX Flows: `../03_design/UX_FLOWS.md`
 - System Architecture: `../02_architecture/SYSTEM_ARCHITECTURE.md`
 - NFR: `../02_architecture/NON_FUNCTIONAL_REQUIREMENTS.md`
 - Data Model: `../02_architecture/DATA_MODEL.md`
 
 ---
 
-## 21. Change Log
+## 20. Change Log
 
 | Version | Date | Change | Author |
 |---|---|---|---|

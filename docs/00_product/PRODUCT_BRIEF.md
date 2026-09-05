@@ -1,12 +1,12 @@
 # Product Brief — <PROJECT_NAME>
 
-> **Document role:** Authoritative source for **why this product exists, who it serves, what outcomes it targets, and which business/product constraints shape it**.
+> **Peran dokumen:** Authoritative source untuk **kenapa product ini ada, siapa yang dilayani, outcome apa yang dituju, dan constraint product/business apa yang membentuknya**.
 >
-> Detailed feature behavior belongs in the PRD and feature specifications. Technical design belongs in architecture documentation.
+> Detailed feature behavior berada di PRD dan Feature Specs. Technical design berada di architecture documentation.
 
 ---
 
-## Document Metadata
+## Metadata Dokumen
 
 | Field | Value |
 |---|---|
@@ -23,11 +23,11 @@
 
 ### Vision
 
-<Describe the long-term change this product should create in one short paragraph.>
+<Jelaskan perubahan jangka panjang yang ingin dihasilkan product dalam satu paragraf singkat.>
 
 ### Product Statement
 
-For `<TARGET_USERS>` who `<CORE_NEED>`, `<PROJECT_NAME>` is a `<PRODUCT_CATEGORY>` that `<PRIMARY_VALUE>`. Unlike `<ALTERNATIVE_OR_STATUS_QUO>`, it `<KEY_DIFFERENTIATOR>`.
+Untuk `<TARGET_USERS>` yang mengalami `<CORE_NEED>`, `<PROJECT_NAME>` adalah `<PRODUCT_CATEGORY>` yang memberikan `<PRIMARY_VALUE>`. Berbeda dengan `<ALTERNATIVE_OR_STATUS_QUO>`, product ini `<KEY_DIFFERENTIATOR>`.
 
 ---
 
@@ -35,15 +35,15 @@ For `<TARGET_USERS>` who `<CORE_NEED>`, `<PROJECT_NAME>` is a `<PRODUCT_CATEGORY
 
 ### Core Problem
 
-<Describe the primary problem in user or business terms. Do not describe the planned solution yet.>
+<Jelaskan masalah utama dari sudut pandang user/business. Jangan membahas solusi terlebih dahulu.>
 
 ### Why It Matters
 
-<Explain the cost, friction, missed opportunity, risk, or user pain created by the problem.>
+<Jelaskan friction, cost, missed opportunity, risk, atau user pain yang ditimbulkan masalah tersebut.>
 
 ### Current Alternatives
 
-How do users solve this today?
+Bagaimana user menyelesaikan masalah ini hari ini?
 
 - `<ALTERNATIVE_1>`
 - `<ALTERNATIVE_2>`
@@ -52,13 +52,11 @@ How do users solve this today?
 
 ### Evidence
 
-List the evidence currently available.
-
 | Evidence | Source | Confidence |
 |---|---|---|
 | `<OBSERVATION>` | `<INTERVIEW / DATA / EXPERIENCE / RESEARCH>` | Low / Medium / High |
 
-Do not present unvalidated assumptions as established facts.
+Jangan menyatakan assumption sebagai fakta tervalidasi.
 
 ---
 
@@ -69,10 +67,11 @@ Do not present unvalidated assumptions as established facts.
 **Who:** `<PRIMARY_USER>`
 
 **Context:**  
-<When and where does this user experience the problem?>
+<Kapan dan di mana user mengalami problem?>
 
-**Primary job-to-be-done:**  
-> When `<SITUATION>`, I want to `<MOTIVATION>`, so I can `<EXPECTED_OUTCOME>`.
+**Primary Job-to-be-Done**
+
+> Ketika `<SITUATION>`, saya ingin `<MOTIVATION>`, sehingga saya dapat `<EXPECTED_OUTCOME>`.
 
 ### Secondary Users
 
@@ -91,11 +90,11 @@ Do not present unvalidated assumptions as established facts.
 
 ### Primary Value
 
-<What useful outcome does the product create?>
+<Outcome berguna apa yang dibuat product?>
 
 ### Differentiation
 
-Why should the target user choose this product instead of the current alternative?
+Kenapa target user memilih product ini dibanding current alternative?
 
 1. `<DIFFERENTIATOR>`
 2. `<DIFFERENTIATOR>`
@@ -105,7 +104,7 @@ Why should the target user choose this product instead of the current alternativ
 
 > `<ONE-SENTENCE PROMISE>`
 
-The promise should describe an outcome, not a feature list.
+Promise harus menggambarkan outcome, bukan daftar feature.
 
 ---
 
@@ -126,62 +125,61 @@ The promise should describe an outcome, not a feature list.
 
 ## 6. Goals
 
-Goals should describe measurable or observable outcomes.
+Goal harus measurable atau setidaknya observable.
 
 ### G-01 — `<GOAL_NAME>`
 
-**Goal:**  
+**Goal**  
 <Description>
 
-**Evidence of success:**  
-<Metric or observable condition>
+**Evidence of Success**  
+<Metric atau observable condition>
 
 ### G-02 — `<GOAL_NAME>`
 
-**Goal:**  
+**Goal**  
 <Description>
 
-**Evidence of success:**  
-<Metric or observable condition>
+**Evidence of Success**  
+<Metric atau observable condition>
 
 ---
 
 ## 7. Non-Goals
 
-The following are intentionally outside the current product direction or current phase.
+Hal berikut secara eksplisit berada di luar arah product/fase saat ini:
 
 - `<NON_GOAL_1>`
 - `<NON_GOAL_2>`
 - `<NON_GOAL_3>`
 
-Non-goals prevent AI agents and contributors from expanding scope accidentally.
+Non-Goals mencegah contributor dan AI memperluas scope secara accidental.
 
 ---
 
 ## 8. Product Principles
 
-These principles guide product decisions when detailed requirements are incomplete.
+Principles membantu keputusan ketika detailed requirement belum lengkap.
 
 ### P-01 — `<PRINCIPLE_NAME>`
 
-<Short explanation.>
+<Penjelasan singkat.>
 
 ### P-02 — `<PRINCIPLE_NAME>`
 
-<Short explanation.>
+<Penjelasan singkat.>
 
 ### P-03 — `<PRINCIPLE_NAME>`
 
-<Short explanation.>
+<Penjelasan singkat.>
 
-Example principles:
-
+Contoh:
 - outcome before feature count;
 - user control before automation;
 - progressive disclosure before overwhelming configuration;
 - safe defaults before maximum flexibility.
 
-Use only principles that genuinely apply.
+Hanya gunakan principle yang benar-benar relevan.
 
 ---
 
@@ -189,7 +187,7 @@ Use only principles that genuinely apply.
 
 ### In Scope
 
-The MVP must prove:
+MVP harus membuktikan:
 
 - `<CAPABILITY / HYPOTHESIS>`
 - `<CAPABILITY / HYPOTHESIS>`
@@ -197,7 +195,7 @@ The MVP must prove:
 
 ### Out of Scope
 
-The MVP will not include:
+MVP tidak mencakup:
 
 - `<CAPABILITY>`
 - `<CAPABILITY>`
@@ -205,15 +203,17 @@ The MVP will not include:
 
 ### MVP Exit Condition
 
-The MVP is considered validated enough to move forward when:
+MVP dianggap cukup tervalidasi untuk investment berikutnya ketika:
 
-<Describe the evidence required to justify the next investment stage.>
+<Describe required evidence.>
+
+Detailed capability scope tetap berada di PRD.
 
 ---
 
 ## 10. Business Model
 
-Complete only when relevant.
+Isi hanya jika relevan.
 
 ### Monetization
 
@@ -234,13 +234,13 @@ Complete only when relevant.
 - `<OPERATIONS>`
 - `<SUPPORT>`
 
-Do not treat pricing assumptions as final product requirements.
+Pricing assumption bukan final product requirement.
 
 ---
 
 ## 11. Success Metrics
 
-Prefer a small number of metrics that indicate real product value.
+Bagian ini adalah canonical owner untuk **product-level success metrics**.
 
 ### Primary Metric
 
@@ -253,49 +253,44 @@ Prefer a small number of metrics that indicate real product value.
 | Metric | Why It Matters |
 |---|---|
 | `<METRIC>` | `<RATIONALE>` |
-| `<METRIC>` | `<RATIONALE>` |
 
 ### Guardrail Metrics
-
-Metrics that should not degrade while optimizing the primary metric.
 
 | Metric | Guardrail |
 |---|---|
 | `<METRIC>` | `<LIMIT OR EXPECTATION>` |
+
+PRD/analytics documentation boleh mereferensikan metric ini tetapi tidak mendefinisikan target berbeda tanpa update Product Brief.
 
 ---
 
 ## 12. Constraints
 
 ### Product Constraints
-
 - `<CONSTRAINT>`
 
 ### Business Constraints
-
 - `<CONSTRAINT>`
 
 ### Legal / Compliance Constraints
-
 - `<CONSTRAINT OR N/A>`
 
 ### Technical Constraints
 
-Only include constraints that materially shape the product, such as:
-
+Hanya masukkan technical constraint yang benar-benar membentuk product, misalnya:
 - mandatory integration;
 - platform restriction;
-- data residency requirement;
+- data residency;
 - offline requirement;
 - compatibility requirement.
 
-Detailed architecture choices do not belong here.
+Detailed architecture choice tidak berada di sini.
 
 ---
 
 ## 13. Dependencies
 
-External conditions required for the product to succeed.
+External condition yang dibutuhkan product:
 
 | Dependency | Why Needed | Risk |
 |---|---|---|
@@ -305,7 +300,7 @@ External conditions required for the product to succeed.
 
 ## 14. Assumptions
 
-Assumptions are beliefs that still require validation.
+Bagian ini adalah canonical owner untuk **product-level assumptions**.
 
 | ID | Assumption | Validation Method | Status |
 |---|---|---|---|
@@ -316,13 +311,11 @@ Assumptions are beliefs that still require validation.
 
 ## 15. Open Product Questions
 
-Only unresolved product-level questions belong here.
-
 | ID | Question | Owner | Target Decision |
 |---|---|---|---|
 | Q-01 | `<QUESTION>` | `<OWNER>` | `<DATE / MILESTONE>` |
 
-When resolved, move the resulting decision into the appropriate authoritative document.
+Saat resolved, pindahkan keputusan ke authoritative document yang sesuai.
 
 ---
 

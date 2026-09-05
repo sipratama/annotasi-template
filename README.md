@@ -1,20 +1,27 @@
-# Annotasi Software Project Template
+# Annotasi Template
 
-An opinionated, AI-ready software product development template for fullstack production applications.
+> 🇮🇩 Bahasa Indonesia · [🇬🇧 English](./README.en.md)
 
-This template is designed for teams or individual builders who use AI coding agents such as Claude, Codex, or similar tools, while still preserving clear product intent, architecture discipline, traceable feature behavior, and production engineering standards.
+Template pengembangan software yang **AI-ready, opinionated, dan production-oriented** untuk product development fullstack, backend, maupun frontend.
 
-The template intentionally avoids document inflation. Each concern should have one authoritative source of truth.
+Annotasi Template membantu manusia dan AI coding agent seperti **Codex** dan **Claude Code** bekerja dari source of truth yang sama—mulai dari product intent, feature behavior, architecture, contract, engineering standards, sampai release evidence.
+
+> Tujuannya bukan membuat dokumentasi sebanyak mungkin. Tujuannya adalah menjaga **shared understanding dengan duplikasi seminimal mungkin**.
 
 ---
 
-## 1. Why This Template Exists
+## Apa yang diselesaikan template ini?
 
-AI-assisted development is fast, but speed creates risk when product requirements, architecture decisions, API contracts, and implementation rules live only in chat history or are duplicated across many documents.
+AI-assisted development bisa mempercepat coding, tetapi mudah menimbulkan masalah ketika:
 
-This template provides a lightweight documentation system that keeps the important decisions durable and gives both humans and AI agents a predictable way to understand a project.
+- requirement hanya hidup di chat;
+- architecture berubah tanpa keputusan eksplisit;
+- API contract tertinggal dari implementation;
+- AI membaca terlalu banyak context yang tidak relevan;
+- business rule tersebar di frontend, backend, dan test;
+- project punya banyak dokumen tetapi tidak jelas mana yang authoritative.
 
-The core flow is:
+Annotasi Template menggunakan alur:
 
 ```text
 PRODUCT BRIEF
@@ -38,70 +45,121 @@ RELEASE
 
 ---
 
-## 2. Core Principles
+## Prinsip utama
 
-### 2.1 One Concern, One Source of Truth
+### One Concern, One Source of Truth
 
-Do not describe the same decision in several places unless one document only links to the authoritative source.
+Satu concern harus mempunyai satu authoritative source.
 
-Examples:
+| Pertanyaan | Source of Truth |
+|---|---|
+| Kenapa product dibuat dan untuk siapa? | `docs/00_product/PRODUCT_BRIEF.md` |
+| Capability apa yang harus tersedia? | `docs/00_product/PRD.md` |
+| Bagaimana satu feature harus berperilaku? | `docs/01_features/<feature>.md` |
+| Bagaimana sistem disusun? | `docs/02_architecture/SYSTEM_ARCHITECTURE.md` |
+| Kenapa keputusan architecture dibuat? | `docs/02_architecture/adr/` |
+| Seberapa baik sistem harus bekerja? | `docs/02_architecture/NON_FUNCTIONAL_REQUIREMENTS.md` |
+| Apa persistent data model-nya? | migrations/schema + `DATA_MODEL.md` |
+| Apa REST/event contract-nya? | `contracts/` bila digunakan |
+| Bagaimana engineering dilakukan? | `docs/standards/` |
+| Bagaimana testing direncanakan? | `docs/04_engineering/TEST_STRATEGY.md` |
+| Bagaimana system dirilis/dioperasikan? | `docs/05_operations/` + `docs/06_delivery/` |
 
-- Product purpose and target users → `PRODUCT_BRIEF.md`
-- Product-level capabilities and scope → `PRD.md`
-- Detailed behavior of one feature → `docs/01_features/<feature>.md`
-- System structure and technical boundaries → `SYSTEM_ARCHITECTURE.md`
-- Important architecture decisions → `docs/02_architecture/adr/`
-- REST interface → `contracts/openapi/`
-- Async/event interface → `contracts/asyncapi/`
-- Development rules → `docs/standards/`
+### AI membaca secara selektif
 
-### 2.2 Documentation Must Help Delivery
+Jangan meminta AI membaca seluruh repository untuk setiap task.
 
-A document is useful when it helps answer a real engineering or product question.
+Default flow:
 
-Do not create documentation only because a template contains a section. Remove sections that do not apply.
+```text
+AGENTS.md
+   ↓
+relevant PRD section
+   ↓
+relevant feature spec
+   ↓
+relevant architecture / ADR
+   ↓
+relevant contract
+   ↓
+relevant engineering standard
+   ↓
+source code + tests
+```
 
-### 2.3 Contracts Before Implementations
+### Contract sebelum implementation drift
 
-When an externally consumed API, event, schema, or persistent format changes, update its contract or migration definition before or together with the implementation.
+Perubahan terhadap API, event, schema, atau persistent format harus memperbarui contract/migration sebelum atau bersamaan dengan implementation.
 
-### 2.4 Decisions Must Be Explicit
+### Architecture decision harus eksplisit
 
-Material architecture changes should not exist only in code or chat. Record them as ADRs.
-
-### 2.5 AI Agents Read Selectively
-
-Do not instruct AI agents to read the entire repository.
-
-Agents should read:
-
-1. `AGENTS.md`
-2. the relevant product or feature specification
-3. relevant architecture documentation
-4. relevant ADRs
-5. relevant contracts
-6. relevant engineering standards
+Material architecture change tidak boleh hanya muncul di code atau chat. Gunakan ADR.
 
 ---
 
-## 3. Recommended Repository Structure
+## Quick Start
+
+### 1. Buat repository dari template
+
+Rekomendasi: aktifkan **Template repository** pada repository GitHub ini, lalu gunakan tombol **Use this template** untuk membuat project baru.
+
+Alternatif: clone/copy repository secara manual.
+
+### 2. Gunakan guided initialization
+
+Buka project baru menggunakan Codex atau Claude Code lalu gunakan prompt:
+
+```text
+Initialize this repository as a new project using AGENTS.md and
+docs/PROJECT_INITIALIZATION.md.
+
+Use existing repository evidence and the context I provide.
+Do not invent missing product decisions.
+
+Project: <nama project>
+Profile: <fullstack | backend-service | frontend-app | prototype>
+Modifiers: <saas | event-driven | ai-enabled | open-source | regulated | none>
+
+After initialization:
+- summarize the selected document profile,
+- report unresolved product/architecture decisions,
+- report files created/removed/updated,
+- run the template/project validation checks where possible.
+```
+
+AI akan menggunakan workflow di [`docs/PROJECT_INITIALIZATION.md`](./docs/PROJECT_INITIALIZATION.md).
+
+### 3. Mulai feature development
+
+Untuk feature baru:
+
+1. copy `docs/01_features/FEATURE_TEMPLATE.md`;
+2. beri nama berdasarkan domain/feature;
+3. definisikan stable requirement IDs seperti `FR-PAYMENT-001`;
+4. implementasikan dengan context routing dari `AGENTS.md`.
+
+---
+
+## Struktur repository template
+
+Struktur yang **benar-benar disediakan oleh template**:
 
 ```text
 .
 ├── README.md
+├── README.en.md
 ├── AGENTS.md
-├── CONTRIBUTING.md
-├── CHANGELOG.md
-├── .env.example
+├── CLAUDE.md
 │
 ├── docs/
+│   ├── PROJECT_INITIALIZATION.md
+│   │
 │   ├── 00_product/
 │   │   ├── PRODUCT_BRIEF.md
 │   │   ├── PRD.md
 │   │   └── ROADMAP.md
 │   │
 │   ├── 01_features/
-│   │   ├── README.md
 │   │   └── FEATURE_TEMPLATE.md
 │   │
 │   ├── 02_architecture/
@@ -147,123 +205,174 @@ Agents should read:
 │       ├── 13_CI_CD_RELEASE.md
 │       └── 14_AI_ASSISTED_DEVELOPMENT.md
 │
-├── contracts/
-│   ├── openapi/
-│   │   └── openapi.yaml
-│   ├── asyncapi/
-│   │   └── asyncapi.yaml
-│   └── schemas/
-│
-└── src/
+└── scripts/
+    └── validate_template.py
 ```
 
-Not every project needs every file. Project profiles may remove sections that are not relevant.
+Folder seperti `src/`, `backend/`, `frontend/`, `contracts/openapi/`, `contracts/asyncapi/`, migrations, atau deployment manifests **dibuat sesuai kebutuhan project**, bukan dipaksakan oleh template.
 
 ---
 
-## 4. Source of Truth Map
+## Dokumen wajib vs kondisional
 
-| Question | Authoritative Source |
+Tidak semua project harus mengisi semua dokumen.
+
+### Core — hampir selalu aktif
+
+| Dokumen | Status |
 |---|---|
-| Why does this product exist? | `docs/00_product/PRODUCT_BRIEF.md` |
-| Who is it for? | `docs/00_product/PRODUCT_BRIEF.md` |
-| What should the product provide? | `docs/00_product/PRD.md` |
-| How should feature X behave? | `docs/01_features/<feature>.md` |
-| How is the system structured? | `docs/02_architecture/SYSTEM_ARCHITECTURE.md` |
-| Why was architecture decision X made? | `docs/02_architecture/adr/` |
-| What is the API contract? | `contracts/openapi/` |
-| What is the event contract? | `contracts/asyncapi/` |
-| What is the persistent data model? | schema/migrations + `DATA_MODEL.md` |
-| How should the UI look and behave? | `DESIGN_SYSTEM.md` + relevant feature spec |
-| How should code be implemented? | `docs/standards/` |
-| How should the system be tested? | `TEST_STRATEGY.md` + relevant feature spec |
-| How is the project run locally? | `DEVELOPER_SETUP.md` |
-| How is the system deployed? | `DEPLOYMENT.md` |
-| What known risks exist? | `RISKS.md` |
-| What is intentionally unsupported? | `KNOWN_LIMITATIONS.md` |
-| Where is the product going next? | `ROADMAP.md` |
+| `README.md` | Wajib |
+| `AGENTS.md` | Wajib untuk AI-assisted project |
+| `PRODUCT_BRIEF.md` | Wajib |
+| `PRD.md` | Wajib untuk product dengan behavior non-trivial |
+| `SYSTEM_ARCHITECTURE.md` | Wajib untuk software non-trivial |
+| `FEATURE_TEMPLATE.md` | Dipertahankan sebagai template |
+| `ADR_TEMPLATE.md` | Dipertahankan sebagai template |
+| `docs/standards/` | Dipertahankan; dibaca selektif |
+
+### Conditional
+
+| Dokumen | Aktif ketika |
+|---|---|
+| `ROADMAP.md` | product memiliki lebih dari satu milestone/direction |
+| `DATA_MODEL.md` | project memiliki persistent/domain data |
+| `NON_FUNCTIONAL_REQUIREMENTS.md` | quality targets perlu eksplisit |
+| `UX_FLOWS.md` | ada user journey lintas screen/feature |
+| `DESIGN_SYSTEM.md` | ada user-facing UI |
+| `TEST_STRATEGY.md` | testing melibatkan lebih dari unit test sederhana |
+| `THREAT_MODEL.md` | ada auth, user data, network boundary, payment, upload, admin, dll. |
+| `DEVELOPER_SETUP.md` | project perlu onboarding developer |
+| `CONFIGURATION.md` | runtime configuration non-trivial |
+| `DEPLOYMENT.md` | project dideploy |
+| `RUNBOOK.md` | project dioperasikan/di-support |
+| `RISKS.md` | ada material risk yang perlu ownership |
+| `RELEASE_CHECKLIST.md` | ada controlled production release |
+| `KNOWN_LIMITATIONS.md` | ada limitation yang perlu diketahui contributor/user |
+
+**Engineering standards tetap disimpan**, walaupun tidak semuanya aktif untuk setiap task. `AGENTS.md` hanya merutekan AI ke standard yang relevan.
 
 ---
 
-## 5. Quick Start
+## Project Profiles
 
-### Step 1 — Define Product Context
+### Fullstack
 
-Complete:
+Default untuk product dengan frontend + backend.
 
-```text
-docs/00_product/PRODUCT_BRIEF.md
-```
+Umumnya mengaktifkan:
+- product docs;
+- feature specs;
+- architecture/data/NFR;
+- design;
+- test strategy/threat model;
+- operations saat menuju production.
 
-Do not start by choosing frameworks. Start with the problem, target users, desired outcomes, scope, constraints, and success metrics.
+### Backend Service
 
-### Step 2 — Define Product Scope
+Design docs dapat dinonaktifkan. Backend, API/integration, persistence, security, testing, dan reliability menjadi prioritas.
 
-Create or complete:
+### Frontend App
 
-```text
-docs/00_product/PRD.md
-```
+Backend/persistence project docs dapat dikurangi. Design, UX, API contract consumption, accessibility, testing, dan security tetap relevan.
 
-Keep the PRD product-oriented. Detailed technical design belongs in architecture documentation.
+### Prototype
 
-### Step 3 — Create Feature Specs
-
-For each significant capability, copy:
-
-```text
-docs/01_features/FEATURE_TEMPLATE.md
-```
-
-Example:
+Gunakan minimum:
 
 ```text
-docs/01_features/authentication.md
-docs/01_features/course-catalog.md
-docs/01_features/checkout.md
-docs/01_features/payment.md
+PRODUCT_BRIEF
+PRD
+FEATURE SPECS
+SYSTEM_ARCHITECTURE
+AGENTS
 ```
 
-### Step 4 — Establish Architecture
+Tambahkan dokumen lain hanya ketika risk/complexity membutuhkannya.
 
-Complete:
+### Modifiers
 
-```text
-docs/02_architecture/SYSTEM_ARCHITECTURE.md
-```
+Profile dapat ditambah modifier:
 
-Create an ADR whenever a material architectural decision must be recorded.
+- `saas`
+- `event-driven`
+- `ai-enabled`
+- `open-source`
+- `regulated`
 
-### Step 5 — Define Contracts
-
-Use machine-readable contracts where possible:
-
-```text
-REST          → OpenAPI
-Async events  → AsyncAPI / JSON Schema
-GraphQL       → GraphQL schema
-Database      → migrations/schema
-```
-
-### Step 6 — Implement With Selective Context
-
-AI agents and contributors should follow `AGENTS.md`.
-
-Do not provide the entire documentation tree to an agent unless the task genuinely requires it.
+Detail aktivasi ada di `docs/PROJECT_INITIALIZATION.md`.
 
 ---
 
-## 6. Requirement IDs
+## Codex dan Claude
 
-Use stable requirement identifiers for important feature behavior.
+### Codex
 
-Recommended format:
+`AGENTS.md` adalah canonical repository-wide instruction source.
+
+### Claude Code
+
+`CLAUDE.md` sengaja sangat tipis dan mengimpor:
+
+```text
+@AGENTS.md
+```
+
+Jadi Claude dan Codex tidak memiliki dua rule set berbeda.
+
+Detailed AI behavior berada di:
+
+```text
+docs/standards/14_AI_ASSISTED_DEVELOPMENT.md
+```
+
+---
+
+## Kebijakan bahasa
+
+Annotasi Template menggunakan:
+
+### Bahasa Indonesia / hybrid
+
+Untuk human-facing product thinking:
+
+- `README.md`
+- `PROJECT_INITIALIZATION.md`
+- `PRODUCT_BRIEF.md`
+- `PRD.md`
+- `ROADMAP.md`
+- `FEATURE_TEMPLATE.md`
+- `UX_FLOWS.md`
+- `DESIGN_SYSTEM.md`
+
+Technical vocabulary seperti `Acceptance Criteria`, `Non-Goals`, `ADR`, `idempotency`, `rollback`, atau `Given/When/Then` boleh tetap English bila lebih natural.
+
+### English
+
+Untuk engineering dan machine-oriented artifacts:
+
+- `AGENTS.md`
+- `CLAUDE.md`
+- architecture docs;
+- ADR;
+- engineering/test/security/operations docs;
+- `docs/standards/`;
+- source code;
+- database/schema naming;
+- OpenAPI/AsyncAPI/contracts.
+
+Hanya README yang dimirror bilingual (`README.md` + `README.en.md`). Specification lain mempunyai **satu canonical language** agar tidak terjadi drift.
+
+---
+
+## Requirement IDs
+
+Feature behavior menggunakan stable IDs:
 
 ```text
 FR-<FEATURE>-<NUMBER>
 ```
 
-Examples:
+Contoh:
 
 ```text
 FR-AUTH-001
@@ -272,95 +381,50 @@ FR-PAYMENT-012
 ```
 
 Rules:
-
-- IDs are stable after publication.
-- Removed IDs are not reused.
-- Tests, API operations, ADRs, or issues may reference these IDs.
-- Do not create IDs for trivial implementation details.
-
----
-
-## 7. Architecture Decision Records
-
-Create an ADR when a decision is:
-
-- difficult or expensive to reverse,
-- affects several features or modules,
-- introduces a major dependency,
-- changes a system boundary,
-- changes a persistence or integration strategy,
-- changes deployment architecture,
-- changes a security model.
-
-Do not create ADRs for routine coding decisions.
+- ID tidak berubah hanya karena refactor;
+- ID yang retired tidak digunakan ulang;
+- test, contract, issue, dan ADR boleh mereferensikan ID;
+- jangan membuat ID untuk implementation detail trivial.
 
 ---
 
-## 8. Project Profiles
+## Versioning
 
-The baseline structure is intended for fullstack products. Optional profiles may add or remove documentation.
+Versi Annotasi Template direkomendasikan menggunakan:
 
-### Fullstack
+- Git Tags;
+- GitHub Releases.
 
-Default profile.
-
-### Backend Service
-
-Frontend and design documentation may be omitted.
-
-### Frontend Application
-
-Backend implementation standards may be reduced, while contracts remain important.
-
-### SaaS
-
-Add stronger guidance for tenancy, billing, deployment, operations, and data isolation.
-
-### Event-Driven
-
-Add event catalog, AsyncAPI, retry, idempotency, ordering, and DLQ rules.
-
-### AI-Enabled
-
-Add model/provider architecture, evaluation, prompt/versioning, privacy, and AI safety rules.
-
-### Open Source
-
-Add governance, release notes, contribution, licensing, and compatibility policies.
-
-### Regulated
-
-Add formal traceability, audit evidence, compliance controls, and stricter release gates.
+Nama repository atau folder tidak perlu membawa nomor versi.
 
 ---
 
-## 9. Definition of Done
+## Validasi
 
-A feature is not complete only because its code compiles.
+Jalankan:
 
-At minimum, applicable items should be true:
+```bash
+python scripts/validate_template.py
+```
 
-- feature behavior matches its specification;
-- relevant API/event contracts are synchronized;
-- architecture boundaries are respected;
-- migrations are safe and reversible where appropriate;
-- relevant automated tests pass;
-- security-sensitive paths are reviewed;
-- observability is sufficient for important production behavior;
-- documentation affected by the change is updated;
-- known limitations are recorded;
-- release-impacting changes are documented.
+Pada project yang sudah diinisialisasi:
 
-The exact project-specific Definition of Done belongs in `docs/standards/01_ENGINEERING_WORKFLOW.md`.
+```bash
+python scripts/validate_template.py --project-mode
+```
+
+Validator melakukan structural checks dasar dan local Markdown link validation. Ini bukan pengganti review isi dokumen.
 
 ---
 
-## 10. Template Philosophy
+## Filosofi template
 
-This repository is not intended to maximize documentation.
+Annotasi Template bukan framework yang mewajibkan semua project mempunyai puluhan dokumen aktif.
 
-It is intended to maximize **shared understanding with minimum duplication**.
+Gunakan tiga aturan:
 
-If a document no longer helps product or engineering decisions, simplify it.
+1. **Keep the source of truth clear.**
+2. **Delete or ignore what does not help delivery.**
+3. **Load only the context needed for the current task.**
 
-If the same fact exists in multiple documents, select one authoritative source and replace the others with references.
+AI mempercepat implementation; AI tidak memiliki product truth.
