@@ -1,409 +1,199 @@
 # AGENTS.md
 
-Instructions for AI coding agents and automated engineering assistants working in this repository.
+Repository-wide instructions for AI coding agents and automated engineering assistants.
 
-This file defines how an agent should gather context, interpret project documentation, make changes, and report evidence.
+This file is intentionally small. It defines **how to work in this repository**, not every engineering rule. Detailed backend, frontend, security, testing, data, and operational guidance belongs in `docs/standards/` and should be loaded only when relevant.
 
-It applies to Claude, Codex, and other AI-assisted development tools unless a tool-specific instruction explicitly overrides a non-project-critical behavior.
+## 1. Core Rule
 
----
+Do not treat chat history, assumptions, generated code, or the current implementation as a substitute for authoritative project documentation.
 
-## 1. Primary Rule
-
-Do not treat chat history, assumptions, generated code, or existing implementation as a substitute for the project's authoritative specifications.
-
-Before changing code, determine:
-
+Before a non-trivial change, determine:
 1. what behavior is requested;
-2. which document owns that behavior;
+2. which source owns that behavior;
 3. which architecture boundaries apply;
-4. which contracts may be affected;
-5. which tests are required.
+4. which contracts or persistent data may change;
+5. which standards apply;
+6. what evidence is required for completion.
 
-Do not silently invent missing product or architecture decisions.
+Do not silently invent product or architecture decisions.
 
----
+## 2. Source of Truth
 
-## 2. Read Selectively, Not Broadly
-
-Do **not** read every document in the repository by default.
-
-Start with the minimum context required for the task.
-
-### Default Reading Order
-
-1. `AGENTS.md`
-2. relevant section of `docs/00_product/PRD.md`
-3. relevant file under `docs/01_features/`
-4. relevant section of `docs/02_architecture/SYSTEM_ARCHITECTURE.md`
-5. relevant ADRs
-6. relevant machine-readable contracts
-7. relevant files under `docs/standards/`
-8. source code related to the task
-
-Read `PRODUCT_BRIEF.md` when the task depends on product intent, target users, scope, goals, or non-goals.
-
-Read operational documentation only when the task affects configuration, deployment, runtime operations, or release behavior.
-
----
-
-## 3. Source of Truth
-
-Use the following authority model.
-
-| Concern | Source of Truth |
+| Concern | Authoritative Source |
 |---|---|
-| Product purpose, users, outcomes, constraints | `PRODUCT_BRIEF.md` |
-| Product capabilities and scope | `PRD.md` |
-| Detailed feature behavior | relevant feature spec |
-| System structure and boundaries | `SYSTEM_ARCHITECTURE.md` |
-| Architecture rationale | relevant ADR |
-| REST contract | OpenAPI |
-| Async/event contract | AsyncAPI / schema |
-| Persistent schema | migrations/schema |
-| UI system | `DESIGN_SYSTEM.md` + feature spec |
+| Product purpose, users, outcomes, constraints | `docs/00_product/PRODUCT_BRIEF.md` |
+| Product capabilities and scope | `docs/00_product/PRD.md` |
+| Detailed feature behavior | `docs/01_features/<feature>.md` |
+| System structure and boundaries | `docs/02_architecture/SYSTEM_ARCHITECTURE.md` |
+| Architecture rationale | `docs/02_architecture/adr/` |
+| Persistent domain model | migrations/schema + `DATA_MODEL.md` |
+| REST interface | `contracts/openapi/` |
+| Async/event interface | `contracts/asyncapi/` or schemas |
+| UI system | `DESIGN_SYSTEM.md` + relevant feature spec |
 | Engineering rules | `docs/standards/` |
-| Test approach | `TEST_STRATEGY.md` + feature spec |
-| Deployment/runtime behavior | operations documentation |
+| Test approach | `TEST_STRATEGY.md` + relevant feature spec |
+| Runtime and deployment | `docs/05_operations/` |
 
-When two sources conflict, do not silently choose whichever is easier to implement.
+When sources conflict, do not choose whichever is easiest to implement. Follow the source that owns the concern, or update that source when the requested change intentionally changes the decision.
 
-Identify the conflict and follow the more authoritative source for that concern. If the task explicitly changes the authoritative decision, update the source of truth as part of the work.
+## 3. Read Selectively
 
----
+Do **not** read all project documentation by default.
 
-## 4. Before Coding
+Default context order:
+1. `AGENTS.md`
+2. relevant PRD section
+3. relevant feature spec
+4. relevant System Architecture section
+5. relevant ADRs
+6. relevant contracts
+7. relevant engineering standards
+8. related source code and tests
 
-Before implementation, establish a compact working model.
+Read `PRODUCT_BRIEF.md` when product intent, users, goals, scope, or non-goals matter. Read operations docs only when configuration, deployment, runtime, or release behavior is affected.
 
-For non-trivial tasks, identify:
+## 4. Standards Routing
 
-- the feature or requirement IDs involved;
-- files likely to change;
-- affected contracts;
-- affected database schema or migrations;
-- affected architecture boundaries;
-- required tests;
-- security or reliability implications.
+Load only standards relevant to the task.
 
-Do not perform unrelated refactoring unless it is necessary for the requested change.
-
-Do not broaden scope merely because an adjacent improvement appears useful.
-
----
-
-## 5. Requirement Changes
-
-Feature behavior belongs in the relevant feature specification.
-
-When behavior changes:
-
-1. update the relevant requirement or acceptance criteria;
-2. preserve stable requirement IDs whenever the underlying requirement remains the same;
-3. create new IDs for genuinely new behavior;
-4. do not reuse deleted requirement IDs;
-5. update implementation and tests to match.
-
-A code change that alters user-visible or externally observable behavior should not leave the corresponding feature specification stale.
-
----
-
-## 6. Architecture Changes
-
-Do not change major architecture implicitly.
-
-Create or update an ADR when a change:
-
-- alters a system or module boundary;
-- introduces a strategic framework, datastore, broker, or provider;
-- changes synchronization vs asynchronous processing;
-- changes deployment topology;
-- changes authentication or authorization strategy;
-- changes persistence strategy;
-- changes an important reliability or scalability approach;
-- is expensive to reverse.
-
-Routine implementation choices do not require an ADR.
-
-When an existing ADR is superseded, preserve the old ADR and mark its status accordingly.
-
----
-
-## 7. Contract-First Changes
-
-Externally consumed contracts are authoritative interfaces.
-
-### REST
-
-Update OpenAPI before or together with implementation when request, response, status code, or endpoint behavior changes.
-
-### Async Events
-
-Update AsyncAPI or event schema before or together with producers and consumers.
-
-### Database
-
-Use migrations for persistent schema changes.
-
-Never depend on undocumented manual database changes.
-
-### Compatibility
-
-For breaking changes:
-
-- identify affected consumers;
-- document migration or rollout strategy;
-- prefer additive changes when practical;
-- do not silently remove or rename public fields.
-
----
-
-## 8. Backend Engineering Rules
-
-When working on backend code:
-
-- preserve domain and module boundaries;
-- keep transport concerns out of domain logic where architecture requires separation;
-- validate inputs at appropriate boundaries;
-- define transaction boundaries explicitly;
-- treat retries and idempotency as separate concerns;
-- do not make remote calls inside database transactions unless architecture explicitly permits it;
-- handle timeouts and partial failures deliberately;
-- avoid leaking sensitive information through errors or logs;
-- update migrations and data contracts when persistence changes;
-- add observability for important business and failure paths;
-- follow `docs/standards/04_BACKEND_STANDARD.md` when present.
-
-Do not introduce a new architectural pattern solely to solve one local coding problem.
-
----
-
-## 9. Frontend Engineering Rules
-
-When working on frontend code:
-
-- follow the design system and feature UX states;
-- keep business behavior aligned with feature specs;
-- distinguish server state from local UI state;
-- implement loading, empty, success, validation, and error states where applicable;
-- preserve accessibility and keyboard behavior;
-- avoid duplicating server authorization logic as a security boundary;
-- do not invent API fields that are absent from the contract;
-- follow established component and feature boundaries;
-- update frontend tests for changed behavior;
-- follow `docs/standards/05_FRONTEND_STANDARD.md` when present.
-
-UI convenience must not silently change product rules.
-
----
-
-## 10. Security Rules
-
-Security-sensitive changes require deliberate review.
-
-Pay special attention to:
-
-- authentication;
-- authorization;
-- sessions and tokens;
-- secrets;
-- personal or sensitive data;
-- file upload;
-- user-generated content;
-- payments;
-- administrative actions;
-- third-party integrations;
-- deserialization and parsing;
-- SQL/query construction;
-- redirects and callback URLs.
-
-Never commit secrets.
-
-Never log credentials, tokens, private keys, full sensitive payloads, or unnecessary personal data.
-
-When a change introduces a new trust boundary or material threat, update the threat model.
-
----
-
-## 11. Database and Migration Rules
-
-When persistent data changes:
-
-- use version-controlled migrations;
-- assess backward compatibility;
-- consider existing production data;
-- add indexes intentionally;
-- avoid destructive migration patterns without a rollout plan;
-- separate schema migration from large data backfills when appropriate;
-- define rollback or recovery strategy when practical;
-- keep code compatible with phased deployment when zero-downtime deployment is required.
-
-Do not treat a successful migration on an empty local database as sufficient production evidence.
-
----
-
-## 12. Testing Rules
-
-Run the smallest meaningful test set during iteration, then the required broader checks before completion.
-
-Depending on the change, testing may include:
-
-- unit tests;
-- integration tests;
-- contract tests;
-- component tests;
-- end-to-end tests;
-- architecture tests;
-- security tests;
-- migration tests;
-- performance tests;
-- smoke tests.
-
-Tests should prove important behavior, not mirror implementation details.
-
-When fixing a defect, add or update a regression test when practical.
-
-Do not delete or weaken a failing test merely to make the build pass unless the requirement itself changed and the test is updated to the new expected behavior.
-
----
-
-## 13. Observability and Reliability
-
-For important production behavior, consider:
-
-- structured logs;
-- metrics;
-- traces;
-- correlation/request identifiers;
-- actionable error classification;
-- retry visibility;
-- dead-letter handling;
-- timeout behavior;
-- health/readiness signals.
-
-Do not log every internal detail by default.
-
-Prefer signals that help answer:
-
-- what failed?
-- for which operation?
-- how often?
-- which dependency was involved?
-- can the system recover automatically?
-- is user or business data affected?
-
----
-
-## 14. Documentation Synchronization
-
-Update documentation when the change makes an authoritative document inaccurate.
-
-Typical triggers:
-
-| Change | Documentation |
+| Area | Standard |
 |---|---|
-| New product behavior | Feature spec / PRD |
-| New architecture decision | ADR |
-| New module boundary | System Architecture |
-| API change | OpenAPI |
-| Event change | AsyncAPI/schema |
-| Persistent model change | migration + Data Model |
-| New runtime configuration | Configuration |
-| New security boundary | Threat Model |
-| New known limitation | Known Limitations |
-| New operational procedure | Runbook |
+| Workflow / review | `01_ENGINEERING_WORKFLOW.md` |
+| Code quality | `02_CODE_QUALITY.md` |
+| Architecture | `03_ARCHITECTURE.md` |
+| Backend | `04_BACKEND_STANDARD.md` |
+| Frontend | `05_FRONTEND_STANDARD.md` |
+| API / integrations / events | `06_API_INTEGRATION_STANDARD.md` |
+| Database / persistence | `07_DATA_PERSISTENCE_STANDARD.md` |
+| Security | `08_SECURITY_STANDARD.md` |
+| Testing | `09_TESTING_STANDARD.md` |
+| Reliability / observability | `10_OBSERVABILITY_RELIABILITY.md` |
+| Performance | `11_PERFORMANCE_STANDARD.md` |
+| Dependencies / supply chain | `12_DEPENDENCY_SUPPLY_CHAIN.md` |
+| CI/CD / release | `13_CI_CD_RELEASE.md` |
+| AI-assisted development | `14_AI_ASSISTED_DEVELOPMENT.md` |
 
-Do not update unrelated documents just to increase documentation coverage.
+If a referenced standard does not exist yet, follow established project patterns and avoid inventing a new project-wide convention.
 
----
+## 5. Before Coding
 
-## 15. Implementation Discipline
+For non-trivial work, identify:
+- requirement or feature IDs;
+- likely files to change;
+- affected API/event contracts;
+- affected schema or migrations;
+- affected architecture boundaries;
+- applicable standards;
+- security, reliability, or compatibility implications;
+- required tests.
 
-Do not:
+Prefer the smallest coherent change that satisfies the requirement. Do not perform unrelated refactoring or broaden scope because an adjacent improvement is possible.
 
-- invent requirements;
-- silently change product scope;
-- silently change architecture;
-- silently change public contracts;
-- bypass validation to simplify implementation;
-- disable security controls to make tests pass;
-- hard-code secrets;
-- mix unrelated refactors into feature work;
-- replace a working dependency without architectural justification;
-- add abstraction only for hypothetical future needs;
-- mark work complete without evidence.
+## 6. Change Discipline
 
-Prefer the smallest coherent change that fully satisfies the requirement.
-
----
-
-## 16. Completion Report
-
-When completing a non-trivial task, report:
-
-### Changed
-
-What behavior or structure changed.
-
-### Requirements
-
-Relevant requirement IDs or feature spec sections.
-
-### Contracts
-
-Any API, event, or schema changes.
-
-### Tests
-
-Tests executed and their result.
+### Product and Feature Behavior
+When observable behavior changes:
+- update the relevant PRD or feature spec;
+- preserve stable requirement IDs when the requirement remains the same;
+- create new IDs for genuinely new behavior;
+- never reuse retired IDs;
+- keep tests aligned with the specification.
 
 ### Architecture
+Do not change major architecture implicitly. Create or update an ADR when a decision materially changes:
+- system or module boundaries;
+- strategic frameworks, datastores, brokers, or providers;
+- sync vs async interaction;
+- deployment topology;
+- authentication or authorization strategy;
+- persistence strategy;
+- major reliability/scalability behavior;
+- a decision that is expensive to reverse.
 
-Any ADR or architecture update.
+Routine implementation choices do not require ADRs.
 
-### Risks / Limitations
+### Contracts
+Public and cross-component interfaces are contract-first:
+- REST changes → update OpenAPI;
+- event changes → update AsyncAPI/schema;
+- persistent schema changes → add version-controlled migration;
+- breaking changes → document consumer impact and rollout strategy.
 
-Anything still unresolved, deferred, or requiring follow-up.
+Do not silently rename, remove, or invent contract fields.
 
-Do not claim tests passed unless they were actually executed.
+## 7. Non-Negotiable Guardrails
 
----
+Do not:
+- invent requirements or silently change scope;
+- silently change architecture or public contracts;
+- bypass validation or authorization to simplify implementation;
+- disable security controls or meaningful tests to make a build pass;
+- commit/hard-code secrets or log sensitive credentials/tokens/keys;
+- introduce destructive data changes without a migration or rollout strategy;
+- mix unrelated refactors into requested work;
+- introduce project-wide abstractions for hypothetical future needs;
+- claim work or tests are complete without evidence.
 
-## 17. Working With Incomplete Specifications
+Architecture invariants remain binding unless an accepted ADR changes them.
 
-If implementation details are missing but product intent is clear, prefer the existing architecture and established patterns.
+## 8. Documentation Synchronization
 
-If a missing decision would materially affect:
+Update documentation only when the change makes its authoritative source inaccurate.
 
-- product behavior,
-- security,
-- public contracts,
-- data integrity,
-- major architecture,
-- irreversible migration,
+| Change | Update |
+|---|---|
+| Product capability/scope | PRD |
+| Detailed feature behavior | Feature spec |
+| Architecture decision | ADR |
+| System/module boundary | System Architecture |
+| REST contract | OpenAPI |
+| Event contract | AsyncAPI/schema |
+| Persistent model | migration/schema + Data Model |
+| Runtime configuration | Configuration |
+| Security/trust boundary | Threat Model |
+| Operational procedure | Runbook |
+| Unsupported behavior | Known Limitations |
 
-do not silently guess.
+Do not duplicate the same fact across documents. Link to the authoritative source instead.
 
-Record the unresolved decision and surface it explicitly.
+## 9. Incomplete Specifications
 
-Temporary implementation assumptions must be clearly labeled and should not become accidental architecture.
+If implementation details are missing but the behavior fits existing architecture and patterns, use the established approach.
 
----
+Do **not** silently guess when a missing decision materially affects product behavior, security/privacy, public contracts, data integrity, major architecture, or destructive/irreversible migration.
 
-## 18. Definition of Done
+Surface the unresolved decision explicitly. Temporary assumptions must be labeled and must not become accidental architecture.
 
-A task is complete when applicable conditions are satisfied:
+## 10. Testing and Evidence
 
+Use the smallest meaningful test set while iterating, then run the broader checks required by affected standards before completion.
+
+Tests should prove behavior, contracts, and important failure paths. For defect fixes, add regression coverage when practical.
+
+Never delete or weaken a meaningful failing test solely to make the build pass. Do not claim a command or test passed unless it was actually executed.
+
+## 11. Completion Report
+
+For non-trivial work, report:
+- **Changed** — behavior or structure changed.
+- **Requirements** — relevant IDs/spec sections.
+- **Contracts / Data** — API, event, schema, or migration changes.
+- **Tests** — commands/checks executed and results.
+- **Architecture** — ADR/architecture changes, or explicitly none.
+- **Risks / Limitations** — unresolved, deferred, or out-of-scope items.
+
+## 12. Definition of Done
+
+A task is complete when all applicable conditions are satisfied:
 - requested behavior is implemented;
 - acceptance criteria are met;
-- contracts are synchronized;
-- architecture rules are respected;
-- migrations are included where required;
+- authoritative documentation is current;
+- contracts and migrations are synchronized;
+- architecture rules and accepted ADRs are respected;
 - relevant tests pass;
-- security implications are addressed;
-- relevant observability exists;
-- affected documentation is current;
-- known limitations are recorded;
-- no unrelated scope is introduced.
+- applicable security and reliability concerns are addressed;
+- no unrelated scope was introduced;
+- remaining limitations are explicit.
 
-Project-specific rules may strengthen this definition.
+Project-specific standards may strengthen this definition.
