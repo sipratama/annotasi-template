@@ -1,86 +1,473 @@
 # Project Initialization — Annotasi Template
 
-> **Peran dokumen:** Guided bootstrap workflow untuk mengubah repository template menjadi project nyata tanpa harus mengedit seluruh file secara manual.
+> **Peran dokumen:** Guided workflow untuk mengubah repository Annotasi Template menjadi project nyata dengan prinsip **product discovery first, repository initialization second**.
 >
-> Dokumen ini dibaca saat initialization. Setelah project stabil, AI tidak perlu membacanya untuk task normal kecuali diminta.
+> Dokumen ini dibaca saat project baru dibuat dari Annotasi Template atau ketika user meminta repository diinisialisasi. Setelah initialization selesai, AI tidak perlu membacanya untuk feature development biasa kecuali diminta.
 
 ---
 
-## 1. Prinsip Initialization
+## 1. Core Principle
 
-Initialization harus:
+Project initialization **MUST NOT begin from repository structure, technology stack, or architecture**.
 
-- menggunakan context yang diberikan user dan evidence yang sudah ada di repository;
-- **tidak mengarang** product facts, requirement, architecture decision, atau metric;
-- memilih document profile yang proporsional terhadap project;
-- mengisi dokumen yang benar-benar aktif;
-- menghapus section yang tidak relevan daripada mengisinya dengan filler;
-- mempertahankan engineering standards sebagai reusable guidance;
-- membuat contract/source/infrastructure folder hanya jika project membutuhkannya.
+Urutan yang benar adalah:
 
-Unknown decision ditulis sebagai `TBD` atau Open Question, bukan ditebak.
+```text
+UNDERSTAND THE PRODUCT
+        ↓
+ESTABLISH MINIMUM PRODUCT CONTEXT
+        ↓
+RECOMMEND PROJECT SHAPE
+        ↓
+INITIALIZE DOCUMENTATION
+        ↓
+ESTABLISH ARCHITECTURE
+        ↓
+CREATE ONLY REQUIRED STRUCTURE
+        ↓
+VALIDATE
+```
+
+AI harus memahami masalah dan intended product outcome sebelum membentuk repository.
+
+> **Understand the problem first, then shape the solution.**
 
 ---
 
-## 2. Kapan Workflow Ini Aktif?
+## 2. Initialization Has Two Phases
+
+Initialization terdiri dari dua fase yang berbeda.
+
+```text
+PHASE A
+PROJECT DISCOVERY
+(read-only)
+        ↓
+Minimum Product Context Gate
+        ↓
+PHASE B
+PROJECT INITIALIZATION
+(repository mutation)
+```
+
+### Phase A — Project Discovery
+
+Tujuan:
+
+- memahami product;
+- menemukan missing context;
+- membedakan fakta, assumption, dan open question;
+- menentukan apakah konteks sudah cukup untuk initialization.
+
+Selama fase ini AI **MUST NOT modify repository files**.
+
+### Phase B — Project Initialization
+
+Fase ini hanya boleh dimulai setelah **Minimum Product Context Gate** terpenuhi.
+
+Tujuan:
+
+- memilih/rekomendasikan project profile;
+- initialize Product Brief;
+- initialize PRD;
+- membuat feature specs yang sudah cukup dipahami;
+- establish initial architecture;
+- activate conditional documentation;
+- membuat contracts/source structure hanya jika relevan;
+- generate project README;
+- validate hasil initialization.
+
+---
+
+## 3. Kapan Workflow Ini Aktif?
 
 Gunakan workflow ini ketika:
 
 - repository baru dibuat dari Annotasi Template;
-- dokumen masih berisi `<PROJECT_NAME>` atau placeholder bootstrap;
-- user meminta "initialize", "start project", "adapt template", atau setara.
+- active project docs masih berisi bootstrap placeholders seperti `<PROJECT_NAME>`;
+- user meminta `initialize`, `start project`, `adapt template`, `bootstrap project`, atau setara.
 
-Jangan jalankan ulang seluruh initialization hanya untuk feature development biasa.
+Jangan menjalankan seluruh initialization untuk:
 
----
-
-## 3. Input Minimum
-
-Idealnya AI mengetahui:
-
-| Input | Contoh |
-|---|---|
-| Project name | `DirakitPro` |
-| Problem / product idea | outcome-first learning platform |
-| Primary user | beginner learner |
-| Base profile | `fullstack` |
-| Stack jika sudah dipilih | Next.js + Spring Boot |
-| Deployment target jika diketahui | VPS / cloud |
-| Modifiers | `saas`, `event-driven`, dll. |
-
-Jika sebagian belum diketahui, gunakan evidence yang tersedia dan tandai sisanya `TBD`.
+- feature implementation biasa;
+- defect fix;
+- refactor;
+- routine architecture change pada project yang sudah initialized.
 
 ---
 
-## 4. Pilih Base Profile
+# PHASE A — PROJECT DISCOVERY
 
-Pilih **satu** base profile.
+## 4. Inspect Before Asking
+
+Sebelum bertanya kepada user, AI harus membaca:
+
+```text
+AGENTS.md
+README.md
+docs/PROJECT_INITIALIZATION.md
+```
+
+Lalu inspect hanya evidence yang relevan dari repository:
+
+- existing source code;
+- build/package files;
+- existing project documentation;
+- Git remote/repository name;
+- current repository structure;
+- user-provided context dalam request/conversation.
+
+### Important Rule
+
+Repository name boleh digunakan sebagai **project name candidate**, tetapi:
+
+> **Repository name MUST NOT be treated as evidence of product purpose.**
+
+Contoh:
+
+```text
+Repository: penatika
+```
+
+AI boleh menyimpulkan:
+
+```text
+Candidate project name: Penatika
+```
+
+tetapi tidak boleh menyimpulkan product purpose tanpa evidence.
+
+---
+
+## 5. Minimum Product Context Gate
+
+Sebelum repository boleh dimodifikasi, AI harus memahami minimal:
+
+| Context | Required | Meaning |
+|---|---:|---|
+| Project name | Yes | Nama project/product candidate |
+| Core problem | Yes | Masalah utama yang ingin diselesaikan |
+| Primary user | Yes | Siapa pengguna utama |
+| Desired user outcome | Yes | Hasil yang ingin didapat user |
+| Initial scope / MVP hypothesis | Yes | Kemampuan awal atau boundary versi pertama |
+| Important known constraints | Yes | Constraint penting, atau eksplisit `None known yet` |
+
+### Tidak Wajib Sebelum Gate
+
+Hal berikut **tidak wajib diketahui** untuk memulai initialization:
+
+- programming language;
+- framework;
+- database;
+- cloud provider;
+- deployment target;
+- monolith vs microservices;
+- event broker;
+- base profile;
+- modifiers.
+
+Hal tersebut boleh tetap undecided sampai product context cukup untuk menilainya.
+
+---
+
+## 6. Context Sufficiency Rule
+
+AI harus mengevaluasi context yang sudah tersedia.
+
+### Gate = PASS
+
+Gate dianggap terpenuhi jika AI dapat menjawab dengan cukup jelas:
+
+```text
+What problem?
+For whom?
+What outcome?
+What initial boundary?
+What known constraints?
+```
+
+Jawaban tidak harus final atau sangat detail.
+
+### Gate = FAIL
+
+Gate gagal jika jawaban masih terlalu kosong atau ambigu sehingga project shape tidak dapat ditentukan secara masuk akal.
+
+Contoh:
+
+```text
+Project: Penatika
+```
+
+atau:
+
+```text
+Aplikasi untuk membantu orang.
+```
+
+belum cukup.
+
+---
+
+## 7. No-Context → No-Mutation Rule
+
+Jika Minimum Product Context Gate belum terpenuhi, AI **MUST NOT**:
+
+- rewrite `README.md`;
+- initialize atau rewrite Product Brief;
+- initialize atau rewrite PRD;
+- create feature specifications;
+- initialize System Architecture;
+- choose technology stack silently;
+- mark a project profile as final;
+- create contracts;
+- create source directories;
+- remove conditional documentation;
+- delete template files;
+- create migrations;
+- create deployment/infrastructure structure.
+
+AI harus tetap berada di **Discovery Mode**.
+
+---
+
+## 8. Adaptive Discovery Questions
+
+Jika context belum cukup, AI harus bertanya hanya tentang informasi yang masih hilang.
+
+### Default Question Areas
+
+Gunakan maksimal sekitar **3–7 pertanyaan dalam satu putaran**, sesuai kebutuhan.
+
+Pertanyaan dasar:
+
+1. **Masalah apa yang ingin product ini selesaikan?**
+2. **Siapa pengguna utamanya?**
+3. **Setelah menggunakan product ini, hasil utama apa yang seharusnya mereka dapatkan?**
+4. **Untuk versi pertama, kemampuan apa saja yang paling penting?**
+5. **Apa yang secara eksplisit belum ingin dibangun di versi awal?**
+6. **Apakah ada constraint yang sudah pasti?**
+7. **Apakah ada keputusan teknologi yang memang sudah fixed?** Jika belum, tidak masalah.
+
+### Question Rules
+
+AI MUST:
+
+- menggunakan context yang sudah diberikan;
+- **tidak menanyakan ulang informasi yang sudah diketahui**;
+- bertanya tentang problem/product sebelum teknologi;
+- menghindari questionnaire panjang;
+- menggunakan follow-up hanya jika jawaban masih terlalu abstrak;
+- membedakan unknown product decision dari implementation detail.
+
+### Example
+
+Jika user sudah mengatakan:
+
+```text
+Saya ingin membuat aplikasi web untuk mahasiswa yang membantu
+mengorganisir catatan kuliah.
+```
+
+AI tidak boleh bertanya lagi:
+
+```text
+Siapa target user?
+Apakah ini web?
+```
+
+AI boleh bertanya:
+
+```text
+Apa outcome utama yang paling penting:
+menemukan catatan dengan cepat, memahami materi,
+membuat rangkuman, atau kolaborasi?
+```
+
+---
+
+## 9. Progressive Discovery
+
+Satu putaran pertanyaan mungkin belum cukup.
+
+Jika jawaban user masih terlalu luas, AI MAY melakukan follow-up yang lebih sempit.
+
+Contoh:
+
+User:
+
+```text
+Untuk membantu mahasiswa belajar lebih baik.
+```
+
+AI dapat memperjelas:
+
+```text
+"Belajar lebih baik" masih luas.
+Outcome mana yang paling dekat untuk versi pertama:
+- mengorganisir catatan,
+- memahami materi,
+- latihan soal,
+- mengatur jadwal,
+- kolaborasi,
+- membangun project,
+atau sesuatu yang lain?
+```
+
+Tujuannya bukan memaksa user memilih dari opsi, tetapi membantu memperjelas intended outcome.
+
+---
+
+## 10. Discovery Must Not Become Technology Interview
+
+Pada Discovery Mode, AI SHOULD NOT langsung bertanya:
+
+```text
+PostgreSQL atau MongoDB?
+Kafka atau RabbitMQ?
+Kubernetes?
+Microservices?
+AWS atau GCP?
+```
+
+kecuali user sudah membawa constraint teknis tersebut.
+
+Technology choice harus mengikuti kebutuhan product, bukan mendahuluinya.
+
+---
+
+## 11. Discovery Summary
+
+Setelah context cukup, tetapi **sebelum repository dimodifikasi**, AI harus menyusun summary:
+
+```text
+Project:
+<NAME>
+
+Problem:
+<CORE PROBLEM>
+
+Primary User:
+<PRIMARY USER>
+
+Desired Outcome:
+<OUTCOME>
+
+Initial Scope:
+- ...
+- ...
+
+Non-Goals:
+- ...
+- ...
+
+Known Constraints:
+- ...
+
+Known Product Assumptions:
+- ...
+
+Remaining Open Questions:
+- ...
+```
+
+Summary harus:
+
+- hanya menggunakan informasi yang didukung oleh user/repository evidence;
+- membedakan confirmed fact dan assumption;
+- tidak mengarang metric/evidence;
+- tidak memaksakan architecture.
+
+---
+
+## 12. Product Context Gate Decision
+
+Setelah Discovery Summary, AI menyatakan:
+
+```text
+Minimum Product Context Gate: PASS
+```
+
+atau:
+
+```text
+Minimum Product Context Gate: FAIL
+```
+
+Jika `FAIL`, lanjutkan discovery.
+
+Jika `PASS`, baru Phase B boleh dimulai.
+
+AI tidak perlu meminta confirmation tambahan jika context sudah jelas dan user memang meminta initialization.
+
+Namun unresolved **material product decisions** harus dicatat sebagai Open Question, bukan ditebak.
+
+---
+
+# PHASE B — PROJECT INITIALIZATION
+
+## 13. Recommend Project Shape
+
+Setelah Product Context Gate `PASS`, AI menentukan atau merekomendasikan project shape.
+
+Catat:
+
+```text
+Recommended Base Profile:
+Modifiers:
+Known Technology Decisions:
+Still-Open Technology Decisions:
+Deployment Maturity:
+Reasoning:
+```
+
+### Important Rule
+
+Base profile adalah **hasil dari product context**, bukan input wajib.
+
+Jika user sudah menentukan profile, AI boleh menggunakannya selama tidak bertentangan dengan product evidence.
+
+Jika belum, AI harus merekomendasikannya.
+
+---
+
+## 14. Base Profiles
+
+Pilih satu base profile.
 
 ### `fullstack`
 
-Untuk product dengan frontend + backend.
+Untuk product yang membutuhkan:
 
-Aktifkan secara default:
+- user-facing frontend;
+- authoritative backend behavior;
+- API/application layer;
+- biasanya persistence/integration.
+
+Typical docs:
+
 - Product Brief;
 - PRD;
 - Feature Specs;
 - System Architecture;
-- Data Model jika ada persistence;
+- Data Model bila persistent;
 - NFR;
 - UX Flows;
 - Design System;
 - Test Strategy;
-- Threat Model untuk internet/user-data system;
+- Threat Model bila ada meaningful trust boundary;
 - Developer Setup;
 - Configuration.
 
-Deployment/Runbook/Release docs aktif ketika menuju production.
+Deployment/Runbook/Release docs aktif sesuai maturity.
 
 ### `backend-service`
 
-Aktifkan:
+Untuk service/API/background system tanpa primary user-facing frontend.
+
+Typical docs:
+
 - Product Brief;
-- PRD bila service mempunyai product/business behavior;
+- PRD bila mempunyai meaningful business capability;
 - Feature Specs;
 - System Architecture;
 - Data Model bila persistent;
@@ -89,13 +476,16 @@ Aktifkan:
 - Threat Model bila network/sensitive;
 - Developer Setup;
 - Configuration;
-- operations/delivery sesuai deployment maturity.
+- operations/delivery sesuai maturity.
 
-UX/Design docs biasanya tidak aktif.
+UX/Design biasanya inactive.
 
 ### `frontend-app`
 
-Aktifkan:
+Untuk application yang mayoritas frontend/client dan mengonsumsi existing backend/service.
+
+Typical docs:
+
 - Product Brief;
 - PRD;
 - Feature Specs;
@@ -108,9 +498,11 @@ Aktifkan:
 - Developer Setup;
 - Configuration.
 
-Data Model/persistence docs hanya aktif bila client mempunyai meaningful local persistence.
+Data Model hanya jika meaningful local persistence ada.
 
 ### `prototype`
+
+Untuk eksplorasi cepat dengan minimum documentation.
 
 Minimum:
 
@@ -122,36 +514,37 @@ SYSTEM_ARCHITECTURE.md
 AGENTS.md
 ```
 
-Tambahkan NFR/security/test/ops docs hanya jika risk membutuhkan.
+Tambahkan docs lain hanya saat risk/complexity membutuhkannya.
 
 Prototype tetap tidak boleh:
+
 - commit secrets;
-- invent requirement;
-- silently break contract;
-- melakukan destructive data change tanpa deliberation.
+- invent requirements;
+- silently break contracts;
+- perform destructive data change without deliberation.
 
 ---
 
-## 5. Optional Modifiers
+## 15. Optional Modifiers
 
-Modifier dapat dikombinasikan dengan base profile.
+Modifiers dapat dikombinasikan dengan base profile.
 
 ### `saas`
 
-Pastikan perhatian pada:
+Pertimbangkan:
 - tenancy;
 - identity/authorization;
 - billing jika ada;
 - data isolation;
 - configuration;
 - deployment/operations;
-- security and retention.
+- security/retention.
 
 ### `event-driven`
 
-Aktifkan:
-- AsyncAPI/schema bila external/cross-module events menjadi contract;
-- event ownership;
+Pertimbangkan:
+- AsyncAPI/schema bila event menjadi contract;
+- ownership;
 - idempotency;
 - retry;
 - ordering;
@@ -160,25 +553,23 @@ Aktifkan:
 
 ### `ai-enabled`
 
-Tambahkan project-specific decisions untuk:
+Pertimbangkan:
 - model/provider;
 - prompt/versioning bila material;
 - evaluation;
 - cost;
 - privacy;
-- unsafe/untrusted model output;
+- untrusted model output;
 - fallback/degradation.
-
-Buat ADR bila model/provider architecture menjadi strategic decision.
 
 ### `open-source`
 
 Pertimbangkan:
 - `CONTRIBUTING.md`;
 - license;
-- changelog/release notes;
-- compatibility policy;
-- public setup docs.
+- public setup;
+- compatibility;
+- release/changelog policy.
 
 ### `regulated`
 
@@ -187,19 +578,18 @@ Perkuat:
 - security;
 - audit;
 - retention;
-- compliance;
-- release evidence;
-- approval.
+- compliance evidence;
+- release approval.
 
-Jangan mengklaim compliance hanya karena template berisi control.
+Jangan mengklaim compliance hanya karena template menyediakan control.
 
 ---
 
-## 6. Activation Matrix
+## 16. Activation Matrix
 
 Legenda:
 
-- **R** — Required/default for profile
+- **R** — Required/default
 - **C** — Conditional
 - **—** — Usually inactive
 
@@ -224,196 +614,323 @@ Legenda:
 | Release Checklist | C | C | C | — |
 | Known Limitations | C | C | C | C |
 
-Engineering standards tetap berada di repo dan dibaca selektif.
+Engineering standards tetap berada di repository dan dibaca secara selektif.
 
 ---
 
-## 7. Initialization Steps
+## 17. Initialize Product Brief First
 
-### Step 1 — Inspect Before Editing
-
-AI harus membaca:
-
-```text
-AGENTS.md
-README.md
-docs/PROJECT_INITIALIZATION.md
-```
-
-Lalu inspect:
-- existing code;
-- package/build files;
-- existing documentation;
-- current repository structure;
-- user-provided context.
-
-Jangan memilih stack hanya berdasarkan template.
-
-### Step 2 — Declare Profile
-
-Catat:
-
-```text
-Base profile:
-Modifiers:
-Known stack:
-Deployment maturity:
-Active project docs:
-Inactive/conditional docs:
-Open decisions:
-```
-
-Tidak perlu membuat file profile tambahan kecuali project memang membutuhkannya.
-
-### Step 3 — Initialize Product Context
-
-Isi:
+File pertama yang diisi:
 
 ```text
 docs/00_product/PRODUCT_BRIEF.md
 ```
 
+Isi hanya berdasarkan Discovery Summary dan confirmed context.
+
 Prioritas:
+
 - problem;
 - target user;
 - value;
-- goals;
+- desired outcome;
+- goals bila diketahui;
 - non-goals;
-- product principles;
+- product principles bila sudah meaningful;
 - MVP boundary;
-- assumptions/open questions.
+- assumptions;
+- open questions.
 
-Jangan mengarang evidence atau metric.
+### Must Not
 
-### Step 4 — Initialize PRD
+Jangan:
 
-Isi PRD hanya sampai level capability/journey/product rules yang benar-benar diketahui.
+- mengarang research evidence;
+- mengarang market data;
+- membuat target metric tanpa basis;
+- mengubah assumption menjadi fact.
 
-Jangan menyalin semua Product Brief ke PRD.
+---
 
-Product Brief tetap owner untuk:
-- product purpose;
-- target user context;
-- strategic outcome;
-- product-level assumptions.
+## 18. Initialize PRD Second
 
-PRD owner untuk:
-- product capability;
-- cross-feature behavior/scope;
-- user journeys;
-- release product acceptance.
+PRD menerjemahkan Product Brief menjadi capability-level product definition.
 
-### Step 5 — Create Feature Specs
+Isi:
 
-Jangan isi `FEATURE_TEMPLATE.md` sebagai satu giant FRD.
+- actors;
+- in/out scope;
+- initial capabilities;
+- cross-feature journeys;
+- product-wide rules;
+- release scope.
 
-Copy per feature:
+### Ownership Boundary
+
+Product Brief owns:
+
+```text
+why
+who
+value
+product-level outcome
+product-level metrics
+product-level assumptions
+```
+
+PRD owns:
+
+```text
+what capabilities
+cross-feature behavior
+product rules
+release product scope
+```
+
+Jangan copy Product Brief ke PRD.
+
+---
+
+## 19. Create Feature Specs Only for Understood Capabilities
+
+Jangan membuat giant FRD.
+
+Untuk capability yang sudah cukup jelas, copy:
+
+```text
+docs/01_features/FEATURE_TEMPLATE.md
+```
+
+menjadi:
 
 ```text
 docs/01_features/authentication.md
-docs/01_features/checkout.md
+docs/01_features/course-enrollment.md
 ```
 
 Gunakan stable IDs:
 
 ```text
 FR-AUTH-001
-FR-CHECKOUT-001
+FR-ENROLLMENT-001
 ```
 
-### Step 6 — Initialize Architecture
+### Important Rule
 
-Isi `SYSTEM_ARCHITECTURE.md` berdasarkan architecture yang diketahui.
+Jika capability masih terlalu ambigu, jangan membuat feature spec penuh hanya untuk mengisi folder.
 
-Minimum:
+Catat sebagai Open Product Question atau PRD future scope.
+
+---
+
+## 20. Establish Architecture After Product Shape
+
+Baru setelah Product Brief + initial PRD cukup, initialize:
+
+```text
+docs/02_architecture/SYSTEM_ARCHITECTURE.md
+```
+
+Architecture harus berasal dari:
+
+- product capability;
+- data needs;
+- user interaction;
+- integration boundary;
+- known constraints;
+- NFR/risk jika tersedia.
+
+### Technology Selection
+
+AI MAY recommend technology jika user belum memilih, tetapi harus menjelaskan:
+
+```text
+Requirement/constraint
+        ↓
+Recommended technology
+        ↓
+Reason
+        ↓
+Tradeoff
+```
+
+Jangan memilih technology hanya karena familiar.
+
+---
+
+## 21. Architecture Minimum
+
+Initial architecture minimal menjelaskan:
+
 - system purpose;
-- runtime components;
-- boundaries;
+- main runtime components;
+- module/system boundaries;
 - dependency direction;
-- auth boundary;
-- data/integration ownership;
+- data ownership;
+- authentication boundary bila relevan;
+- integration boundary bila relevan;
 - architecture invariants.
 
-Jika keputusan material belum dipilih, jangan pura-pura locked.
+Jika keputusan material belum dipilih:
 
-### Step 7 — Activate Conditional Docs
+```text
+TBD / Open Architecture Decision
+```
 
-Untuk setiap conditional document:
+lebih baik daripada architecture fiction.
 
-- **aktif dan isi** jika concern sudah relevan;
-- **biarkan template** jika project diperkirakan segera membutuhkan dan statusnya jelas;
-- **hapus dari derived project** jika benar-benar tidak relevan dan hanya menambah noise.
+---
 
-Jangan mengisi file dengan puluhan `N/A`.
+## 22. ADR During Initialization
 
-### Step 8 — Create Contracts Only When Needed
+Buat ADR hanya jika material architecture decision benar-benar sudah dipilih.
 
-Jika REST API benar-benar menjadi cross-component/public contract:
+Contoh:
+
+```text
+ADR-0001-use-postgresql.md
+```
+
+Jangan membuat ADR untuk setiap implementation preference.
+
+Jika decision belum dipilih, simpan sebagai Open Architecture Question.
+
+---
+
+## 23. Activate Conditional Documents
+
+Setelah profile dan product shape cukup jelas, evaluasi conditional docs.
+
+Untuk setiap document:
+
+### Activate
+
+Jika concern sudah nyata dan document membantu delivery.
+
+### Keep as Template / Conditional
+
+Jika kemungkinan segera dibutuhkan tetapi belum cukup context untuk mengisinya.
+
+### Remove from Derived Project
+
+Hanya jika concern jelas tidak relevan dan file hanya menjadi noise.
+
+---
+
+## 24. Unknown Profile → No Pruning
+
+AI **MUST NOT remove conditional documentation while base profile is unresolved**.
+
+Jika profile masih:
+
+```text
+TBD
+```
+
+maka:
+
+```text
+UX_FLOWS.md
+DESIGN_SYSTEM.md
+DATA_MODEL.md
+THREAT_MODEL.md
+...
+```
+
+tidak boleh dihapus hanya berdasarkan asumsi.
+
+Pruning hanya boleh dilakukan setelah profile/context gate cukup.
+
+---
+
+## 25. Create Contracts Only When Boundaries Exist
+
+REST API contract:
 
 ```text
 contracts/openapi/openapi.yaml
 ```
 
-Jika async events benar-benar menjadi contract:
+dibuat hanya jika REST API menjadi actual cross-component/public boundary.
+
+Async contract:
 
 ```text
 contracts/asyncapi/asyncapi.yaml
 ```
 
-Jika belum ada contract, jangan membuat dummy schema hanya agar folder terlihat lengkap.
+dibuat hanya jika events/messages memang menjadi contract.
 
-### Step 9 — Project README
-
-Ganti README template dengan README project yang menjelaskan minimal:
-
-- apa project-nya;
-- stack;
-- setup/run;
-- architecture/docs entry points;
-- test command;
-- deployment status bila ada.
-
-Derived project tidak wajib mempertahankan README bilingual kecuali audience membutuhkannya.
-
-### Step 10 — Validate
-
-Jalankan:
-
-```bash
-python scripts/validate_template.py --project-mode
-```
-
-Lalu lakukan project-specific build/test checks.
-
-### Step 11 — Initialization Report
-
-AI harus melaporkan:
-
-```text
-Profile
-Files activated
-Files removed
-Files created
-Known stack
-Open product decisions
-Open architecture decisions
-Contracts created
-Validation/tests executed
-Risks / limitations
-```
+Jangan membuat dummy contract folder agar repository terlihat lengkap.
 
 ---
 
-## 8. Placeholder Rules
+## 26. Create Source Structure Only After Architecture Is Known
 
-Placeholder diperbolehkan pada reusable template files:
+Template tidak menentukan:
+
+```text
+src/
+backend/
+frontend/
+services/
+apps/
+packages/
+```
+
+Source structure harus mengikuti selected architecture dan technology.
+
+Jangan membuat folder architecture secara speculative.
+
+---
+
+## 27. README Is Generated Last
+
+Project README **MUST NOT be generated during Discovery Mode**.
+
+README baru dibuat setelah:
+
+- Product Brief initialized;
+- PRD baseline tersedia;
+- base profile diketahui;
+- initial architecture cukup diketahui;
+- active docs diketahui;
+- source/build setup diketahui jika sudah dibuat.
+
+README harus menjadi summary project nyata, bukan daftar `TBD`.
+
+Jika stack belum dipilih, README boleh mengatakan stack belum diputuskan, tetapi product purpose tetap harus jelas.
+
+---
+
+## 28. Derived Project README
+
+README project minimal menjelaskan:
+
+- apa product/project-nya;
+- problem/outcome;
+- target user bila relevan;
+- current project status;
+- technology stack bila sudah dipilih;
+- setup/run bila tersedia;
+- test command bila tersedia;
+- key documentation entry points;
+- deployment status bila relevan.
+
+Derived project tidak wajib bilingual.
+
+---
+
+## 29. Placeholder Rules
+
+Placeholder diperbolehkan pada reusable template files seperti:
 
 ```text
 docs/01_features/FEATURE_TEMPLATE.md
 docs/02_architecture/adr/ADR_TEMPLATE.md
 ```
 
-Pada active project docs, metadata placeholder seperti berikut harus diganti atau dinyatakan eksplisit:
+Pada active project docs, metadata placeholder:
 
 ```text
 <PROJECT_NAME>
@@ -422,9 +939,9 @@ Pada active project docs, metadata placeholder seperti berikut harus diganti ata
 <AUTHOR>
 ```
 
-Unknown content tidak boleh diisi dengan fakta palsu.
+harus diganti.
 
-Gunakan:
+Jika value memang belum diketahui, gunakan:
 
 ```text
 TBD
@@ -433,69 +950,215 @@ Open Question
 Not decided
 ```
 
-sesuai konteks.
+tetapi jangan menggunakan `TBD` untuk menggantikan seluruh product definition ketika discovery seharusnya dilakukan.
 
 ---
 
-## 9. Standards Rules During Initialization
+## 30. Standards During Initialization
 
-Jangan rewrite seluruh `docs/standards/` untuk setiap project.
+Jangan rewrite seluruh:
 
-Standards adalah reusable baseline.
+```text
+docs/standards/
+```
+
+untuk setiap project.
+
+Standards adalah reusable engineering baseline.
 
 Project-specific deviation harus hidup di:
-- architecture;
+
+- System Architecture;
 - ADR;
 - NFR;
-- security/design documentation;
+- Threat Model;
+- Design documentation;
+- Configuration/operations docs;
 
-bukan dengan menyalin standard ke versi kedua.
+sesuai concern ownership.
 
 ---
 
-## 10. Initialization Prompt — Recommended
+## 31. Validation
+
+Setelah initialization:
+
+```bash
+python3 scripts/validate_template.py --project-mode
+```
+
+atau:
+
+```bash
+python scripts/validate_template.py --project-mode
+```
+
+Lalu jalankan project-specific checks bila source/build sudah tersedia.
+
+Contoh:
+
+```text
+pnpm test
+./mvnw test
+dotnet test
+```
+
+sesuai stack.
+
+---
+
+## 32. Initialization Report
+
+AI harus melaporkan:
+
+```text
+Product Context
+Minimum Product Context Gate
+Selected / Recommended Profile
+Modifiers
+Files Activated
+Files Kept Conditional
+Files Removed
+Files Created
+Feature Specs Created
+Known Technology Decisions
+Open Product Decisions
+Open Architecture Decisions
+Contracts Created
+Validation / Tests Executed
+Risks / Limitations
+Recommended Next Step
+```
+
+Report harus faktual.
+
+Jangan menyatakan initialization selesai jika Product Brief masih sekadar template skeleton.
+
+---
+
+# RECOMMENDED USER EXPERIENCE
+
+## 33. Default Initialization Behavior
+
+Jika user mengatakan:
+
+```text
+Initialize this project.
+```
+
+AI harus:
+
+```text
+inspect
+  ↓
+evaluate product context
+  ↓
+IF insufficient:
+    ask discovery questions
+ELSE:
+    summarize context
+    recommend project shape
+    initialize
+```
+
+User tidak seharusnya dipaksa mengetahui:
+
+```text
+profile
+modifier
+stack
+deployment
+```
+
+sebelum product context dibahas.
+
+---
+
+## 34. Recommended Initialization Prompt
+
+Gunakan prompt sederhana:
 
 ```text
 Initialize this repository using AGENTS.md and
 docs/PROJECT_INITIALIZATION.md.
 
-Project context:
-<PASTE PROJECT CONTEXT>
+Start with Project Discovery.
 
-Base profile:
-<fullstack | backend-service | frontend-app | prototype>
+Inspect the repository and the context I provide first.
+Do not modify the repository until the Minimum Product Context Gate
+defined in PROJECT_INITIALIZATION.md is satisfied.
 
-Modifiers:
-<saas | event-driven | ai-enabled | open-source | regulated | none>
+Ask only for product context that is still missing.
+Focus on the problem, users, desired outcome, initial scope,
+non-goals, and important constraints before discussing technology.
 
-Rules:
-- inspect existing repository evidence first;
-- do not invent missing product facts or architecture decisions;
-- use TBD/Open Question for unresolved material decisions;
-- activate only relevant project-specific documents;
-- keep engineering standards as reusable references;
-- create contracts only if the project needs those boundaries;
-- keep feature specs modular;
-- run project-mode validation when finished;
-- report profile, changed files, unresolved decisions, and evidence.
+After the context gate passes:
+- recommend the project profile and modifiers;
+- initialize only relevant project documentation;
+- create feature specs only for sufficiently understood capabilities;
+- establish architecture from product requirements and constraints;
+- create contracts/source structure only when justified;
+- generate the project README last;
+- run project-mode validation;
+- report unresolved decisions and evidence.
+
+Do not invent missing product facts or architecture decisions.
 ```
+
+### Optional Context
+
+User MAY append known context:
+
+```text
+Project:
+<NAME>
+
+What I already know:
+<PRODUCT IDEA / PROBLEM / USER / CONSTRAINTS>
+```
+
+Profile, modifiers, technology, dan deployment target boleh diberikan jika memang sudah diketahui, tetapi bukan mandatory input.
 
 ---
 
-## 11. Initialization Definition of Done
+# INITIALIZATION DEFINITION OF DONE
+
+## 35. Discovery Definition of Done
+
+Discovery selesai ketika:
+
+- [ ] project name diketahui;
+- [ ] core problem cukup jelas;
+- [ ] primary user cukup jelas;
+- [ ] desired outcome cukup jelas;
+- [ ] initial scope/MVP hypothesis cukup jelas;
+- [ ] important known constraints dicatat atau eksplisit `None known yet`;
+- [ ] assumptions dibedakan dari confirmed facts;
+- [ ] remaining material questions eksplisit;
+- [ ] Minimum Product Context Gate = `PASS`.
+
+---
+
+## 36. Initialization Definition of Done
 
 Initialization selesai ketika:
 
-- [ ] base profile ditentukan;
-- [ ] Product Brief menggambarkan project nyata;
-- [ ] PRD mempunyai known capability/scope;
-- [ ] feature specs awal dibuat bila scope diketahui;
+- [ ] Discovery Definition of Done terpenuhi;
+- [ ] base profile dipilih atau direkomendasikan berdasarkan product context;
+- [ ] Product Brief menggambarkan product nyata;
+- [ ] PRD mempunyai capability/scope yang diketahui;
+- [ ] initial feature specs dibuat hanya untuk sufficiently understood capabilities;
 - [ ] System Architecture menggambarkan baseline nyata, bukan template fiction;
-- [ ] conditional docs diputuskan secara eksplisit;
-- [ ] contract folders hanya dibuat bila dibutuhkan;
-- [ ] active docs tidak memakai project metadata placeholders;
-- [ ] README project sudah relevan;
+- [ ] conditional docs diputuskan setelah profile diketahui;
+- [ ] irrelevant docs hanya dihapus setelah cukup evidence;
+- [ ] contract folders hanya dibuat bila boundary benar-benar ada;
+- [ ] source structure hanya dibuat berdasarkan actual architecture/stack;
+- [ ] active docs tidak memakai unresolved bootstrap metadata placeholders;
+- [ ] project README dibuat terakhir dan menggambarkan project nyata;
 - [ ] validation dijalankan bila tooling tersedia;
-- [ ] open decisions dan limitations dilaporkan.
+- [ ] open product/architecture decisions dilaporkan;
+- [ ] remaining limitations/risks eksplisit.
 
-Initialization **tidak** berarti semua requirement dan architecture harus sudah final.
+Initialization **tidak berarti semua requirements atau architecture harus final**.
+
+Tujuannya adalah menghasilkan baseline project yang cukup nyata, coherent, dan grounded untuk memulai delivery tanpa mengarang keputusan.
