@@ -4,7 +4,7 @@
 
 Template pengembangan software yang **AI-ready, opinionated, dan production-oriented** untuk product development fullstack, backend, maupun frontend.
 
-Annotasi Template membantu manusia dan AI coding agent seperti **Codex** dan **Claude Code** bekerja dari source of truth yang sama—mulai dari product intent, feature behavior, architecture, contract, engineering standards, sampai release evidence.
+Annotasi Template membantu manusia dan AI coding agent seperti **Codex** dan **Claude Code** bekerja dari source of truth yang sama—mulai dari product discovery, product intent, feature behavior, architecture, contract, engineering standards, sampai release evidence.
 
 > Tujuannya bukan membuat dokumentasi sebanyak mungkin. Tujuannya adalah menjaga **shared understanding dengan duplikasi seminimal mungkin**.
 
@@ -15,6 +15,7 @@ Annotasi Template membantu manusia dan AI coding agent seperti **Codex** dan **C
 AI-assisted development bisa mempercepat coding, tetapi mudah menimbulkan masalah ketika:
 
 - requirement hanya hidup di chat;
+- AI mulai membentuk repository sebelum memahami product;
 - architecture berubah tanpa keputusan eksplisit;
 - API contract tertinggal dari implementation;
 - AI membaca terlalu banyak context yang tidak relevan;
@@ -24,9 +25,13 @@ AI-assisted development bisa mempercepat coding, tetapi mudah menimbulkan masala
 Annotasi Template menggunakan alur:
 
 ```text
+PROJECT DISCOVERY
+      ↓
+PRODUCT CONTEXT GATE
+      ↓
 PRODUCT BRIEF
       ↓
-     PRD
+PRD
       ↓
 FEATURE SPECS
       ↓
@@ -43,6 +48,10 @@ TEST EVIDENCE
 RELEASE
 ```
 
+Prinsip initialization-nya sederhana:
+
+> **Pahami product terlebih dahulu. Bentuk repository setelah konteksnya cukup.**
+
 ---
 
 ## Prinsip utama
@@ -53,6 +62,7 @@ Satu concern harus mempunyai satu authoritative source.
 
 | Pertanyaan | Source of Truth |
 |---|---|
+| Bagaimana project baru ditemukan dan diinisialisasi? | `docs/PROJECT_INITIALIZATION.md` |
 | Kenapa product dibuat dan untuk siapa? | `docs/00_product/PRODUCT_BRIEF.md` |
 | Capability apa yang harus tersedia? | `docs/00_product/PRD.md` |
 | Bagaimana satu feature harus berperilaku? | `docs/01_features/<feature>.md` |
@@ -65,11 +75,29 @@ Satu concern harus mempunyai satu authoritative source.
 | Bagaimana testing direncanakan? | `docs/04_engineering/TEST_STRATEGY.md` |
 | Bagaimana system dirilis/dioperasikan? | `docs/05_operations/` + `docs/06_delivery/` |
 
+### Discovery sebelum initialization
+
+Untuk project baru, AI tidak boleh langsung membuat architecture, memilih stack, atau menghapus dokumentasi hanya berdasarkan nama repository.
+
+Initialization terdiri dari:
+
+```text
+PHASE A — Project Discovery
+(read-only)
+        ↓
+Minimum Product Context Gate
+        ↓
+PHASE B — Project Initialization
+(repository mutation)
+```
+
+Jika konteks product belum cukup, AI harus bertanya hanya tentang informasi yang masih hilang.
+
 ### AI membaca secara selektif
 
 Jangan meminta AI membaca seluruh repository untuk setiap task.
 
-Default flow:
+Untuk project yang sudah diinisialisasi, default flow:
 
 ```text
 AGENTS.md
@@ -101,42 +129,275 @@ Material architecture change tidak boleh hanya muncul di code atau chat. Gunakan
 
 ### 1. Buat repository dari template
 
-Rekomendasi: aktifkan **Template repository** pada repository GitHub ini, lalu gunakan tombol **Use this template** untuk membuat project baru.
+Klik:
+
+```text
+Use this template
+→ Create a new repository
+```
+
+pada repository Annotasi Template.
 
 Alternatif: clone/copy repository secara manual.
 
-### 2. Gunakan guided initialization
+Repository baru akan membawa documentation framework, AI instructions, engineering standards, initialization workflow, dan validator.
 
-Buka project baru menggunakan Codex atau Claude Code lalu gunakan prompt:
+**Jangan langsung mengisi seluruh template atau membuat source structure secara manual.**
+
+---
+
+### 2. Buka repository baru dengan Codex atau Claude Code
+
+AI akan membaca:
 
 ```text
-Initialize this repository as a new project using AGENTS.md and
-docs/PROJECT_INITIALIZATION.md.
-
-Use existing repository evidence and the context I provide.
-Do not invent missing product decisions.
-
-Project: <nama project>
-Profile: <fullstack | backend-service | frontend-app | prototype>
-Modifiers: <saas | event-driven | ai-enabled | open-source | regulated | none>
-
-After initialization:
-- summarize the selected document profile,
-- report unresolved product/architecture decisions,
-- report files created/removed/updated,
-- run the template/project validation checks where possible.
+AGENTS.md
+        ↓
+docs/PROJECT_INITIALIZATION.md
 ```
 
-AI akan menggunakan workflow di [`docs/PROJECT_INITIALIZATION.md`](./docs/PROJECT_INITIALIZATION.md).
+`AGENTS.md` adalah repository-wide instruction source.
 
-### 3. Mulai feature development
+`PROJECT_INITIALIZATION.md` mengatur discovery-first initialization.
+
+---
+
+### 3. Mulai Project Discovery
+
+Gunakan prompt berikut:
+
+```text
+Initialize this repository using AGENTS.md and
+docs/PROJECT_INITIALIZATION.md.
+
+Start with Project Discovery.
+
+Inspect the repository and the context I provide first.
+Do not modify the repository until the Minimum Product Context Gate
+defined in PROJECT_INITIALIZATION.md is satisfied.
+
+Ask only for product context that is still missing.
+Focus on the problem, users, desired outcome, initial scope,
+non-goals, and important constraints before discussing technology.
+
+After the context gate passes:
+- recommend the project profile and modifiers;
+- initialize only relevant project documentation;
+- create feature specs only for sufficiently understood capabilities;
+- establish architecture from product requirements and constraints;
+- create contracts/source structure only when justified;
+- generate the project README last;
+- run project-mode validation;
+- report unresolved decisions and evidence.
+
+Do not invent missing product facts or architecture decisions.
+```
+
+Anda **tidak perlu menentukan profile, database, framework, atau deployment target dari awal**.
+
+Jika context yang tersedia baru:
+
+```text
+Project: Penatika
+```
+
+AI seharusnya **tidak mengubah repository**.
+
+AI akan masuk Discovery Mode dan bertanya tentang product terlebih dahulu.
+
+---
+
+### 4. Berikan context yang sudah Anda ketahui
+
+Opsional, tetapi semakin jelas context awal, semakin sedikit pertanyaan discovery yang diperlukan.
+
+Contoh:
+
+```text
+Project:
+<NAMA_PROJECT>
+
+What I already know:
+- masalah yang ingin diselesaikan;
+- pengguna utama;
+- outcome yang diharapkan;
+- gambaran versi pertama;
+- constraint yang sudah pasti.
+```
+
+Tidak perlu memaksakan jawaban teknis yang memang belum diputuskan.
+
+---
+
+### 5. Minimum Product Context Gate
+
+Sebelum repository boleh diinisialisasi, AI minimal harus memahami:
+
+```text
+✓ Project name
+✓ Core problem
+✓ Primary user
+✓ Desired user outcome
+✓ Initial scope / MVP hypothesis
+✓ Important known constraints
+```
+
+Constraint boleh:
+
+```text
+None known yet
+```
+
+jika memang belum ada.
+
+Hal berikut boleh tetap undecided:
+
+```text
+technology stack
+database
+deployment target
+monolith / microservices
+event broker
+base profile
+modifiers
+```
+
+---
+
+### 6. AI merekomendasikan project shape
+
+Setelah context gate `PASS`, AI menentukan atau merekomendasikan:
+
+```text
+Base Profile
+Modifiers
+Active Documentation
+Conditional Documentation
+Known Technology Decisions
+Open Technology Decisions
+```
+
+Contoh:
+
+```text
+Recommended Base Profile:
+fullstack
+
+Recommended Modifiers:
+saas
+
+Reason:
+- product membutuhkan user-facing UI;
+- authoritative backend behavior;
+- persistent user data;
+- authentication dan tenant isolation.
+```
+
+Profile adalah **hasil dari product discovery**, bukan sesuatu yang harus diketahui user sebelum mulai.
+
+---
+
+### 7. Repository baru diinisialisasi
+
+Urutan initialization:
+
+```text
+Discovery Summary
+        ↓
+Product Brief
+        ↓
+PRD
+        ↓
+Initial Feature Specs
+        ↓
+System Architecture
+        ↓
+Conditional Documents
+        ↓
+Contracts if needed
+        ↓
+Source Structure if justified
+        ↓
+Project README
+        ↓
+Validation
+```
+
+README project dibuat **terakhir**, sehingga README menggambarkan project yang benar-benar sudah dipahami dan bukan sekadar daftar `TBD`.
+
+---
+
+### 8. Validasi initialization
+
+Jalankan:
+
+```bash
+python3 scripts/validate_template.py --project-mode
+```
+
+atau pada environment tertentu:
+
+```bash
+python scripts/validate_template.py --project-mode
+```
+
+Validator memeriksa structural health seperti local Markdown links dan unresolved bootstrap metadata.
+
+Validator **bukan** pengganti product, architecture, atau engineering review.
+
+---
+
+### 9. Review baseline sebelum coding
+
+Sebelum implementation dimulai, review minimal:
+
+```text
+PRODUCT_BRIEF.md
+        ↓
+Apakah problem, user, dan outcome benar?
+
+PRD.md
+        ↓
+Apakah capability dan scope benar?
+
+FEATURE SPECS
+        ↓
+Apakah behavior awal sudah sesuai?
+
+SYSTEM_ARCHITECTURE.md
+        ↓
+Apakah technical boundaries mengikuti kebutuhan product?
+```
+
+Setelah baseline tersebut masuk akal, commit initialization sebagai checkpoint project.
+
+Contoh:
+
+```bash
+git add .
+git commit -m "chore: initialize project from Annotasi Template"
+```
+
+---
+
+### 10. Mulai feature development
 
 Untuk feature baru:
 
-1. copy `docs/01_features/FEATURE_TEMPLATE.md`;
+1. gunakan/copy `docs/01_features/FEATURE_TEMPLATE.md`;
 2. beri nama berdasarkan domain/feature;
 3. definisikan stable requirement IDs seperti `FR-PAYMENT-001`;
 4. implementasikan dengan context routing dari `AGENTS.md`.
+
+Contoh task:
+
+```text
+Implement FR-PAYMENT-001 from
+docs/01_features/payment.md.
+
+Follow AGENTS.md and load only the relevant architecture,
+contracts, standards, source code, and tests.
+```
 
 ---
 
@@ -206,10 +467,11 @@ Struktur yang **benar-benar disediakan oleh template**:
 │       └── 14_AI_ASSISTED_DEVELOPMENT.md
 │
 └── scripts/
+    ├── README.md
     └── validate_template.py
 ```
 
-Folder seperti `src/`, `backend/`, `frontend/`, `contracts/openapi/`, `contracts/asyncapi/`, migrations, atau deployment manifests **dibuat sesuai kebutuhan project**, bukan dipaksakan oleh template.
+Folder seperti `src/`, `backend/`, `frontend/`, `contracts/openapi/`, `contracts/asyncapi/`, migrations, atau deployment manifests **dibuat sesuai kebutuhan project setelah product dan architecture cukup dipahami**, bukan dipaksakan oleh template.
 
 ---
 
@@ -221,7 +483,7 @@ Tidak semua project harus mengisi semua dokumen.
 
 | Dokumen | Status |
 |---|---|
-| `README.md` | Wajib |
+| `README.md` | Wajib setelah project diinisialisasi |
 | `AGENTS.md` | Wajib untuk AI-assisted project |
 | `PRODUCT_BRIEF.md` | Wajib |
 | `PRD.md` | Wajib untuk product dengan behavior non-trivial |
@@ -249,35 +511,46 @@ Tidak semua project harus mengisi semua dokumen.
 | `RELEASE_CHECKLIST.md` | ada controlled production release |
 | `KNOWN_LIMITATIONS.md` | ada limitation yang perlu diketahui contributor/user |
 
-**Engineering standards tetap disimpan**, walaupun tidak semuanya aktif untuk setiap task. `AGENTS.md` hanya merutekan AI ke standard yang relevan.
+Engineering standards tetap disimpan, walaupun tidak semuanya aktif untuk setiap task. `AGENTS.md` hanya merutekan AI ke standard yang relevan.
+
+Conditional documentation **tidak boleh dihapus hanya karena profile belum diketahui**.
 
 ---
 
 ## Project Profiles
 
+Project profile membantu menentukan dokumentasi dan engineering concern yang relevan.
+
+**User tidak wajib memilih profile sebelum discovery.** Secara default, AI merekomendasikan profile setelah Minimum Product Context Gate terpenuhi.
+
 ### Fullstack
 
-Default untuk product dengan frontend + backend.
+Untuk product yang membutuhkan user-facing frontend dan authoritative backend behavior.
 
 Umumnya mengaktifkan:
+
 - product docs;
 - feature specs;
 - architecture/data/NFR;
-- design;
+- UX/design;
 - test strategy/threat model;
 - operations saat menuju production.
 
 ### Backend Service
 
-Design docs dapat dinonaktifkan. Backend, API/integration, persistence, security, testing, dan reliability menjadi prioritas.
+Untuk API/service/background system tanpa primary user-facing frontend.
+
+Design docs biasanya dapat dinonaktifkan. Backend, API/integration, persistence, security, testing, dan reliability menjadi prioritas.
 
 ### Frontend App
+
+Untuk application yang mayoritas client/frontend dan menggunakan existing backend/service.
 
 Backend/persistence project docs dapat dikurangi. Design, UX, API contract consumption, accessibility, testing, dan security tetap relevan.
 
 ### Prototype
 
-Gunakan minimum:
+Untuk eksplorasi cepat dengan baseline minimum:
 
 ```text
 PRODUCT_BRIEF
@@ -289,9 +562,11 @@ AGENTS
 
 Tambahkan dokumen lain hanya ketika risk/complexity membutuhkannya.
 
+Prototype tetap mengikuti discovery-first initialization.
+
 ### Modifiers
 
-Profile dapat ditambah modifier:
+Setelah product context diketahui, profile dapat ditambah modifier:
 
 - `saas`
 - `event-driven`
@@ -299,7 +574,7 @@ Profile dapat ditambah modifier:
 - `open-source`
 - `regulated`
 
-Detail aktivasi ada di `docs/PROJECT_INITIALIZATION.md`.
+Detail rekomendasi dan activation matrix berada di `docs/PROJECT_INITIALIZATION.md`.
 
 ---
 
@@ -381,6 +656,7 @@ FR-PAYMENT-012
 ```
 
 Rules:
+
 - ID tidak berubah hanya karena refactor;
 - ID yang retired tidak digunakan ulang;
 - test, contract, issue, dan ADR boleh mereferensikan ID;
@@ -401,19 +677,25 @@ Nama repository atau folder tidak perlu membawa nomor versi.
 
 ## Validasi
 
-Jalankan:
+Untuk repository Annotasi Template:
 
 ```bash
-python scripts/validate_template.py
+python3 scripts/validate_template.py
 ```
 
 Pada project yang sudah diinisialisasi:
 
 ```bash
-python scripts/validate_template.py --project-mode
+python3 scripts/validate_template.py --project-mode
 ```
 
 Validator melakukan structural checks dasar dan local Markdown link validation. Ini bukan pengganti review isi dokumen.
+
+Penjelasan lengkap tersedia di:
+
+```text
+scripts/README.md
+```
 
 ---
 
@@ -421,10 +703,11 @@ Validator melakukan structural checks dasar dan local Markdown link validation. 
 
 Annotasi Template bukan framework yang mewajibkan semua project mempunyai puluhan dokumen aktif.
 
-Gunakan tiga aturan:
+Gunakan prinsip berikut:
 
-1. **Keep the source of truth clear.**
-2. **Delete or ignore what does not help delivery.**
-3. **Load only the context needed for the current task.**
+1. **Understand the product before shaping the solution.**
+2. **Keep the source of truth clear.**
+3. **Delete or ignore what does not help delivery.**
+4. **Load only the context needed for the current task.**
 
 AI mempercepat implementation; AI tidak memiliki product truth.
