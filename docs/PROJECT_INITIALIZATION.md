@@ -1049,17 +1049,27 @@ Initialize this project.
 AI harus:
 
 ```text
-inspect
+execute Project Discovery immediately in the current turn
+  ↓
+inspect repository evidence and provided context
   ↓
 evaluate product context
   ↓
 IF insufficient:
-    ask discovery questions
+    ask the missing discovery questions immediately
 ELSE:
     summarize context
     recommend project shape
-    initialize
+    continue directly into Phase B — Project Initialization
 ```
+
+AI **MUST NOT** hanya acknowledge instruction initialization atau sekadar
+menjelaskan apa yang akan dilakukan.
+
+Ketika jawaban user membuat Minimum Product Context Gate menjadi `PASS`, AI
+harus melanjutkan langsung ke Phase B tanpa meminta prompt `proceed` atau
+konfirmasi tambahan. Pengecualian hanya jika user secara eksplisit meminta
+discovery-only atau read-only work.
 
 User tidak seharusnya dipaksa mengetahui:
 
@@ -1084,15 +1094,24 @@ docs/PROJECT_INITIALIZATION.md.
 
 Start with Project Discovery.
 
+Execute Project Discovery immediately in this turn.
+Do not merely acknowledge these instructions or describe what you would do.
+
 Inspect the repository and the context I provide first.
 Do not modify the repository until the Minimum Product Context Gate
 defined in PROJECT_INITIALIZATION.md is satisfied.
 
-Ask only for product context that is still missing.
+If the Minimum Product Context Gate is incomplete, ask only for the
+missing product context immediately.
 Focus on the problem, users, desired outcome, initial scope,
 non-goals, and important constraints before discussing technology.
 
-After the context gate passes:
+Once my answers make the Minimum Product Context Gate PASS, continue
+directly into Phase B — Project Initialization without requiring another
+"proceed" prompt, unless I explicitly requested discovery-only or read-only
+work.
+
+In Phase B:
 - recommend the project profile and modifiers;
 - initialize only relevant project documentation;
 - create feature specs only for sufficiently understood capabilities;

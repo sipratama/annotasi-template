@@ -172,15 +172,24 @@ docs/PROJECT_INITIALIZATION.md.
 
 Start with Project Discovery.
 
+Execute Project Discovery immediately in this turn.
+Do not merely acknowledge these instructions or describe what you would do.
+
 Inspect the repository and the context I provide first.
 Do not modify the repository until the Minimum Product Context Gate
 defined in PROJECT_INITIALIZATION.md is satisfied.
 
-Ask only for product context that is still missing.
+If the Minimum Product Context Gate is incomplete, ask only for the
+missing product context immediately.
 Focus on the problem, users, desired outcome, initial scope,
 non-goals, and important constraints before discussing technology.
 
-After the context gate passes:
+Once my answers make the Minimum Product Context Gate PASS, continue
+directly into Phase B — Project Initialization without requiring another
+"proceed" prompt, unless I explicitly requested discovery-only or read-only
+work.
+
+In Phase B:
 - recommend the project profile and modifiers;
 - initialize only relevant project documentation;
 - create feature specs only for sufficiently understood capabilities;
@@ -203,7 +212,8 @@ Project: Penatika
 
 the AI should **not modify the repository**.
 
-The AI will enter Discovery Mode and ask about the product first.
+The AI must enter Discovery Mode immediately and ask about any missing product
+context, rather than merely acknowledging the instructions.
 
 ---
 

@@ -87,6 +87,39 @@ CORE_PROJECT_PLACEHOLDERS = [
 ]
 
 MARKDOWN_LINK_RE = re.compile(r"\[[^\]]*\]\(([^)]+)\)")
+FENCED_CODE_BLOCK_RE = re.compile(r"^ {0,3}(`{3,}|~{3,})(.*)$")
+
+
+def remove_fenced_code_blocks(text: str) -> str:
+    visible_lines = []
+    fence_char = None
+    fence_length = 0
+
+    for line in text.splitlines(keepends=True):
+        content = line.rstrip("\r\n")
+
+        if fence_char is not None:
+            if re.fullmatch(
+                rf" {{0,3}}{re.escape(fence_char)}{{{fence_length},}}[ \t]*",
+                content,
+            ):
+                fence_char = None
+                fence_length = 0
+            continue
+
+        match = FENCED_CODE_BLOCK_RE.match(content)
+        if match:
+            marker, info = match.groups()
+            if marker[0] == "`" and "`" in info:
+                visible_lines.append(line)
+                continue
+            fence_char = marker[0]
+            fence_length = len(marker)
+            continue
+
+        visible_lines.append(line)
+
+    return "".join(visible_lines)
 
 
 def check_structure() -> list[str]:
@@ -100,7 +133,7 @@ def check_structure() -> list[str]:
 def check_local_markdown_links() -> list[str]:
     errors = []
     for md in ROOT.rglob("*.md"):
-        text = md.read_text(encoding="utf-8")
+        text = remove_fenced_code_blocks(md.read_text(encoding="utf-8"))
         for raw in MARKDOWN_LINK_RE.findall(text):
             target = raw.strip().split()[0].strip("<>")
             if (
