@@ -2,11 +2,11 @@
 
 Repository-wide instructions for AI coding agents and automated engineering assistants.
 
-This file is intentionally small. It defines **how to work in this repository**, not every engineering rule. Detailed guidance belongs in `docs/standards/` and should be loaded only when relevant.
+This file is intentionally small. It defines **how to work in this repository**, not every engineering rule. Detailed backend, frontend, security, testing, data, and operational guidance belongs in `docs/standards/` and should be loaded only when relevant.
 
 ## 1. Core Rule
 
-Do not treat chat history, assumptions, generated code, or current implementation as a substitute for authoritative project documentation.
+Do not treat chat history, assumptions, generated code, repository names, or current implementation as a substitute for authoritative project documentation.
 
 Before a non-trivial change, determine:
 1. what behavior is requested;
@@ -18,16 +18,37 @@ Before a non-trivial change, determine:
 
 Do not silently invent product or architecture decisions.
 
-### Initialization Trigger
+### New Project / Template Initialization
 
-If this repository still contains project-template placeholders such as `<PROJECT_NAME>` and the task is to start/adapt a new project, read `docs/PROJECT_INITIALIZATION.md` before normal feature implementation.
+If this repository is still in template/bootstrap state, or the user asks to initialize/adapt/start a new project:
 
-Do not treat template placeholder content as confirmed project facts.
+1. read `docs/PROJECT_INITIALIZATION.md`;
+2. start with **Project Discovery**;
+3. inspect existing repository evidence and user-provided context;
+4. evaluate the **Minimum Product Context Gate**;
+5. do not mutate project files until that gate passes.
+
+A repository name MAY be used as a project-name candidate, but MUST NOT be treated as evidence of product purpose.
+
+If product context is insufficient, ask only the missing discovery questions. Do not initialize a repository full of `TBD` values.
+
+Until the Minimum Product Context Gate passes, do **not**:
+- rewrite the project README;
+- initialize Product Brief or PRD;
+- create feature specs;
+- establish architecture;
+- select a final project profile;
+- silently select a technology stack;
+- create source or contract directories;
+- remove conditional template documentation.
+
+Once the gate passes, follow the initialization sequence defined in `docs/PROJECT_INITIALIZATION.md`.
 
 ## 2. Source of Truth
 
 | Concern | Authoritative Source |
 |---|---|
+| Project initialization / discovery workflow | `docs/PROJECT_INITIALIZATION.md` |
 | Product purpose, users, outcomes, constraints | `docs/00_product/PRODUCT_BRIEF.md` |
 | Product capabilities and scope | `docs/00_product/PRD.md` |
 | Detailed feature behavior | `docs/01_features/<feature>.md` |
@@ -41,11 +62,23 @@ Do not treat template placeholder content as confirmed project facts.
 | Test approach | `docs/04_engineering/TEST_STRATEGY.md` + relevant feature spec |
 | Runtime and deployment | `docs/05_operations/` |
 
-When sources conflict, follow the source that owns the concern, or update that source when the requested change intentionally changes the decision.
+When sources conflict, do not choose whichever is easiest to implement. Follow the source that owns the concern, or update that source when the requested change intentionally changes the decision.
 
 ## 3. Read Selectively
 
 Do **not** read all project documentation by default.
+
+### During New Project Initialization
+
+Read:
+1. `AGENTS.md`
+2. `docs/PROJECT_INITIALIZATION.md`
+3. `README.md`
+4. relevant existing repository evidence
+
+Then stay in Discovery Mode until the Minimum Product Context Gate passes.
+
+### During Normal Product Development
 
 Default context order:
 1. `AGENTS.md`
@@ -57,7 +90,9 @@ Default context order:
 7. relevant engineering standards
 8. related source code and tests
 
-Read `PRODUCT_BRIEF.md` when product intent, users, goals, scope, or non-goals matter. Read operations docs only when configuration, deployment, runtime, or release behavior is affected.
+Read `PRODUCT_BRIEF.md` when product intent, users, goals, scope, non-goals, or product-level assumptions matter.
+
+Read operations docs only when configuration, deployment, runtime, release, or incident behavior is affected.
 
 ## 4. Standards Routing
 
@@ -93,6 +128,8 @@ For non-trivial work, identify:
 - required tests.
 
 Prefer the smallest coherent change that satisfies the requirement. Do not perform unrelated refactoring or broaden scope because an adjacent improvement is possible.
+
+If the project is not initialized yet, **do not enter coding mode**. Complete the discovery-first initialization flow first.
 
 ## 6. Change Discipline
 
@@ -133,6 +170,8 @@ Do not silently rename, remove, or invent contract fields.
 
 Do not:
 - invent requirements or silently change scope;
+- infer product purpose from a repository/project name;
+- initialize project documentation without sufficient product context;
 - silently change architecture or public contracts;
 - bypass validation or authorization to simplify implementation;
 - disable security controls or meaningful tests to make a build pass;
@@ -150,8 +189,9 @@ Update documentation only when the change makes its authoritative source inaccur
 
 | Change | Update |
 |---|---|
-| Product capability/scope | `docs/00_product/PRD.md` |
-| Detailed feature behavior | relevant feature spec |
+| Product purpose/user/outcome | Product Brief |
+| Product capability/scope | PRD |
+| Detailed feature behavior | Feature spec |
 | Architecture decision | ADR |
 | System/module boundary | System Architecture |
 | REST contract | OpenAPI |
@@ -168,9 +208,17 @@ Do not duplicate the same fact across documents. Link to the authoritative sourc
 
 If implementation details are missing but the behavior fits existing architecture and patterns, use the established approach.
 
-Do **not** silently guess when a missing decision materially affects product behavior, security/privacy, public contracts, data integrity, major architecture, or destructive/irreversible migration.
+Do **not** silently guess when a missing decision materially affects:
+- product behavior;
+- security/privacy;
+- public contracts;
+- data integrity;
+- major architecture;
+- destructive/irreversible migration.
 
 Surface the unresolved decision explicitly. Temporary assumptions must be labeled and must not become accidental architecture.
+
+During initial project discovery, missing **product context** is not an implementation detail. Follow `docs/PROJECT_INITIALIZATION.md` and ask for the missing context instead of filling the repository with placeholders.
 
 ## 10. Testing and Evidence
 
@@ -178,11 +226,21 @@ Use the smallest meaningful test set while iterating, then run broader checks re
 
 Tests should prove behavior, contracts, and important failure paths. For defect fixes, add regression coverage when practical.
 
-Never delete or weaken a meaningful failing test solely to make the build pass. Do not claim a command or test passed unless it was actually executed.
+Never delete or weaken a meaningful failing test solely to make the build pass.
+
+Do not claim a command or test passed unless it was actually executed.
+
+For project initialization, run the project-mode template validator when available:
+
+```bash
+python3 scripts/validate_template.py --project-mode
+```
+
+Validation passing does **not** prove product context or architecture quality; it only provides structural evidence.
 
 ## 11. Completion Report
 
-For non-trivial work, report:
+For non-trivial implementation work, report:
 - **Changed** — behavior or structure changed.
 - **Requirements** — relevant IDs/spec sections.
 - **Contracts / Data** — API, event, schema, or migration changes.
@@ -190,9 +248,11 @@ For non-trivial work, report:
 - **Architecture** — ADR/architecture changes, or explicitly none.
 - **Risks / Limitations** — unresolved, deferred, or out-of-scope items.
 
+For project initialization, use the initialization report defined in `docs/PROJECT_INITIALIZATION.md`, including the Product Context Gate result and unresolved product/architecture decisions.
+
 ## 12. Definition of Done
 
-A task is complete when all applicable conditions are satisfied:
+A normal development task is complete when all applicable conditions are satisfied:
 - requested behavior is implemented;
 - acceptance criteria are met;
 - authoritative documentation is current;
@@ -203,4 +263,6 @@ A task is complete when all applicable conditions are satisfied:
 - no unrelated scope was introduced;
 - remaining limitations are explicit.
 
-Project-specific standards may strengthen this definition.
+A new-project initialization is complete only when the discovery and initialization Definition of Done in `docs/PROJECT_INITIALIZATION.md` is satisfied.
+
+Project-specific standards may strengthen these definitions.
